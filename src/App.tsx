@@ -579,9 +579,9 @@ const RCard = ({ r, onClick, topWeek }) => {
   const statusClass = {open:"card-status-open",opening_soon:"card-status-soon",closed:"card-status-closed"}[status];
   const statusLabel = {open:"Open now",opening_soon:"Opening soon",closed:"Closed"}[status];
   return (
-    <div className="card" onClick={()=>onClick(r)} style={{opacity:isClosed?0.92:1}}>
+    <div className="card" onClick={()=>onClick(r)} style={{opacity:isClosed?0.55:1}}>
       <div className="card-img">
-        <img src={r.photos[0]} alt={r.name} loading="lazy" style={{filter:isClosed?"grayscale(30%) brightness(0.96)":"none",transition:"filter .3s"}}/>
+        <img src={r.photos[0]} alt={r.name} loading="lazy" style={{filter:isClosed?"grayscale(85%) brightness(0.8)":"none",transition:"filter .3s"}}/>
         {r.distance && <span className="dist-pill"><Ic.Pin/>{r.distance}</span>}
         {topWeek && <span className="weekly-bar">Top This Week</span>}
         <span className={`card-status-pill ${statusClass}`}>{statusLabel}</span>
@@ -623,14 +623,15 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         .select("*, profiles(nickname)")
         .eq("restaurant_id", r.id)
         .order("created_at", { ascending: false });
-      if (data && data.length > 0) {
+      if (data) {
         const mapped = data.map(rv => ({
           id: rv.id,
           author: rv.profiles?.nickname || "Anonymous",
           rating: rv.rating,
           text: rv.body,
           date: rv.created_at,
-          photo: rv.photo || null
+          photo: rv.photo || null,
+          reply: rv.reply || null
         }));
         setReviews(mapped);
         onUpdateRestaurant({...r, reviewsList: mapped});
@@ -639,7 +640,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
     loadReviews();
   }, [r.id]);
 
-  // ── FIX 3: Reviews now sync properly using user.sbId ──
   const submitReview = async () => {
     if (!rvRating || !rvText.trim()) return alert("Please select a rating and write your review.");
     const nr = { id: uid(), author: user?.nickname||"Anonymous", rating: rvRating, text: rvText.trim(), date: new Date().toISOString(), photo: rvPhoto||null };
@@ -652,6 +652,18 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         photo: rvPhoto||null
       });
       if (error) { alert("Failed to save review. Please try again."); return; }
+      // Reload from Supabase so all reviews (including others') are fresh
+      const { data } = await sb.from("reviews")
+        .select("*, profiles(nickname)")
+        .eq("restaurant_id", r.id)
+        .order("created_at", { ascending: false });
+      if (data) {
+        const mapped = data.map(rv => ({ id: rv.id, author: rv.profiles?.nickname||"Anonymous", rating: rv.rating, text: rv.body, date: rv.created_at, photo: rv.photo||null, reply: rv.reply||null }));
+        setReviews(mapped);
+        onUpdateRestaurant({...r, reviewsList: mapped});
+        setRvRating(0); setRvText(""); setRvPhoto(null); setShowRvForm(false);
+        return;
+      }
     }
     const updated = [nr, ...reviews];
     setReviews(updated);
@@ -2033,9 +2045,59 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   );
 };
 
+const CompleteProfileScreen = ({ defaultName, avatar, onComplete }) => {
+  const [nickname, setNickname] = useState(defaultName||"");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const submit = async () => {
+    if (!nickname.trim()) return setError("Please enter your name.");
+    if (!phone.trim()) return setError("Please enter your phone number.");
+    const clean = phone.replace(/[\s-]/g,"");
+    if (!/^601[0-9]{8,9}$/.test(clean)) return setError("Phone must be Malaysian format, e.g. 60123456789");
+    setLoading(true);
+    await onComplete(nickname.trim(), clean);
+    setLoading(false);
+  };
+
+  return (
+    <><style>{FONTS}{CSS}</style>
+    <div className="app">
+      <div className="auth-screen">
+        <div className="auth-hero" style={{height:"32vh"}}>
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85" alt="Food"/>
+          <div className="auth-hero-ov"/>
+          <div className="auth-hero-txt">
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:44,color:"#fff",fontWeight:600}}>Peckish</div>
+          </div>
+        </div>
+        <div className="auth-body">
+          {avatar && <img src={avatar} alt="" style={{width:64,height:64,borderRadius:"50%",objectFit:"cover",marginBottom:16,border:"3px solid #DDD9D3"}}/>}
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,marginBottom:4}}>One last step 👋</div>
+          <div style={{fontSize:13,color:"#9E9590",marginBottom:22}}>Just confirm your name and add a phone number to complete your profile.</div>
+          <div className="inp-group">
+            <label className="inp-label">Your Name</label>
+            <input className="inp" placeholder="What should we call you?" value={nickname} onChange={e=>setNickname(e.target.value)}/>
+          </div>
+          <div className="inp-group">
+            <label className="inp-label">Phone Number</label>
+            <input className="inp" placeholder="e.g. 60123456789" value={phone} onChange={e=>setPhone(e.target.value)}/>
+          </div>
+          {error && <div className="inp-error" style={{marginBottom:12}}>{error}</div>}
+          <button className="btn btn-dark btn-full" onClick={submit} disabled={loading}>
+            {loading ? "Saving..." : "Enter Peckish →"}
+          </button>
+        </div>
+      </div>
+    </div></>
+  );
+};
+
 export default function App() {
   const [appState, setAppState] = useState("loading");
   const [user, setUser] = useState(null);
+  const [pendingOAuthUser, setPendingOAuthUser] = useState(null);
   const [restaurants, setRestaurants] = useState([]);
   const [tab, setTab] = useState("home");
   const [detail, setDetail] = useState(null);
@@ -2063,8 +2125,14 @@ export default function App() {
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
           const { data: profile } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
-          setUser({ id: session.user.id, sbId: session.user.id, nickname: profile?.nickname||session.user.email.split("@")[0], phone: profile?.phone||"", isGuest: false });
-          setAppState("app");
+          if (!profile?.phone) {
+            // OAuth user without phone — show completion screen
+            setPendingOAuthUser({ sbUser: session.user, profile });
+            setAppState("complete-profile");
+          } else {
+            setUser({ id: session.user.id, sbId: session.user.id, nickname: profile?.nickname||session.user.email?.split("@")[0], phone: profile.phone, avatar: profile?.avatar||session.user.user_metadata?.avatar_url||null, isGuest: false });
+            setAppState("app");
+          }
         } else {
           setAppState("auth");
         }
@@ -2116,6 +2184,13 @@ export default function App() {
     setUser(u); setAppState("app");
     if (!CONFIGURED) localStorage.setItem("peckish_demo_user", JSON.stringify(u));
   };
+  const handleCompleteProfile = async (nickname, phone) => {
+    const su = pendingOAuthUser.sbUser;
+    await sb.from("profiles").upsert({ id: su.id, nickname, phone, avatar: su.user_metadata?.avatar_url||null });
+    setUser({ id: su.id, sbId: su.id, nickname, phone, avatar: su.user_metadata?.avatar_url||null, isGuest: false });
+    setPendingOAuthUser(null);
+    setAppState("app");
+  };
   const handleGuest = () => {
     const g = { id:"guest", nickname:"Guest", phone:"", isGuest:true };
     setUser(g); setAppState("app");
@@ -2150,6 +2225,12 @@ export default function App() {
       </div>
     </div></>
   );
+
+  if (appState==="complete-profile") {
+    const su = pendingOAuthUser?.sbUser;
+    const defaultName = su?.user_metadata?.full_name || su?.email?.split("@")[0] || "";
+    return <CompleteProfileScreen defaultName={defaultName} avatar={su?.user_metadata?.avatar_url||null} onComplete={handleCompleteProfile}/>;
+  }
 
   if (appState==="auth") return (
     <><style>{FONTS}{CSS}</style>
