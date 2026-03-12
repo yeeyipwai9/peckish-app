@@ -1,29 +1,20 @@
 // @ts-nocheck
 // ═══════════════════════════════════════════════════════════
-// PECKISH v7 — Full app with Supabase backend
-//
-// SETUP (in StackBlitz terminal):
-//   npm install @supabase/supabase-js
-//
-// Then fill in your credentials below:
+// PECKISH v9 — Full app with Supabase backend
 // ═══════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// ─── YOUR SUPABASE CREDENTIALS ─────────────────────────────
-const SUPABASE_URL = "https://dkusjegqmyahztgzlwkf.supabase.co/";        // https://xxxx.supabase.co
-const SUPABASE_ANON_KEY = "sb_publishable_EPOzLF9sY-IvpBcLaWmFBg_0RvVsiZb"; // from Project Settings → API
-// ───────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://dkusjegqmyahztgzlwkf.supabase.co/";
+const SUPABASE_ANON_KEY = "sb_publishable_EPOzLF9sY-IvpBcLaWmFBg_0RvVsiZb";
 
 const CONFIGURED = !SUPABASE_URL.startsWith("YOUR");
-const ADMIN_EMAIL = "yeeyipwai9@gmail.com"; // Admin account
+const ADMIN_EMAIL = "yeeyipwai9@gmail.com";
 const sb = CONFIGURED ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-// ═══ FONTS ═══
 const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap');`;
 
-// ═══ CSS ═══
 const CSS = `
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#EAE6E0;font-family:'DM Sans',sans-serif;color:#1A1816;-webkit-font-smoothing:antialiased;}
@@ -33,18 +24,12 @@ body{background:#EAE6E0;font-family:'DM Sans',sans-serif;color:#1A1816;-webkit-f
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes popIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
 @keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
-
-/* NAV */
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid #DDD9D3;display:flex;z-index:200;padding-bottom:env(safe-area-inset-bottom,0px);}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 8px;cursor:pointer;gap:3px;color:#B0A89E;transition:color .18s;font-size:10px;font-weight:500;letter-spacing:.03em;user-select:none;}
 .ni.on{color:#1A1816;}
 .ni svg{width:20px;height:20px;stroke-width:1.6;}
-
-/* DISTANCE BADGE */
 .dist-pill{position:absolute;top:10px;right:10px;background:#B8644A;color:#fff;border-radius:20px;font-size:11px;font-weight:700;padding:4px 11px;display:flex;align-items:center;gap:4px;}
 .dist-pill-inline{display:inline-flex;align-items:center;gap:4px;background:#F5E6DF;color:#8A3A20;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;}
-
-/* STATUS BADGES */
 .s-open{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#2A6A2A;}
 .s-open::before{content:'';width:7px;height:7px;border-radius:50%;background:#3A9A3A;flex-shrink:0;}
 .s-soon{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#8A5A00;}
@@ -55,8 +40,6 @@ body{background:#EAE6E0;font-family:'DM Sans',sans-serif;color:#1A1816;-webkit-f
 .card-status-open{background:rgba(42,106,42,.82);color:#E0F0E0;}
 .card-status-soon{background:rgba(138,90,0,.82);color:#FDECC8;}
 .card-status-closed{background:rgba(26,24,22,.72);color:#E8E4DE;}
-
-/* INPUTS */
 .inp{width:100%;background:#fff;border:1.5px solid #DDD9D3;border-radius:10px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1A1816;outline:none;transition:border .15s;}
 .inp:focus{border-color:#5A5550;}
 .inp::placeholder{color:#C0BCB6;}
@@ -68,8 +51,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .sbar input{border:none;outline:none;flex:1;font-family:'DM Sans',sans-serif;font-size:14px;color:#1A1816;background:transparent;min-width:0;}
 .sbar input::placeholder{color:#C0BCB6;}
 .inp-error{font-size:12px;color:#B83A20;margin-top:5px;}
-
-/* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 22px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;letter-spacing:.02em;white-space:nowrap;}
 .btn:active{transform:scale(.97);}
 .btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
@@ -79,14 +60,9 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .btn-danger{background:#FEF0EE;color:#B83A20;}
 .btn-full{width:100%;}
 .btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;}
-
-/* CHIPS */
 .chips{display:flex;gap:7px;overflow-x:auto;padding:0 16px 2px;scrollbar-width:none;}
 .chip{white-space:nowrap;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid #D0CCC6;background:#fff;color:#6B6560;transition:all .15s;flex-shrink:0;}
 .chip.on{background:#1A1816;color:#fff;border-color:#1A1816;}
-
-/* CARDS */
-
 .pwa-banner{position:fixed;bottom:72px;left:12px;right:12px;background:#1A1816;color:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.25);animation:slideUp .3s ease;}
 .pwa-banner-icon{width:44px;height:44px;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:#1A1816;}
 .pwa-banner-text{flex:1;}
@@ -95,7 +71,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .pwa-banner-btn{background:#fff;color:#1A1816;border:none;border-radius:8px;padding:8px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;font-family:"DM Sans",sans-serif;}
 .pwa-banner-close{background:none;border:none;color:#fff;opacity:.5;cursor:pointer;font-size:18px;padding:0 0 0 8px;line-height:1;}
 @keyframes slideUp{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
-
 .card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 1px 8px rgba(0,0,0,.06);cursor:pointer;transition:transform .15s;}
 .card:active{transform:scale(.985);}
 .card-img{position:relative;width:100%;height:200px;overflow:hidden;background:#F0EDE8;}
@@ -107,8 +82,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .card-addr{font-size:12px;color:#A09890;margin-top:8px;display:flex;gap:5px;align-items:flex-start;line-height:1.4;}
 .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
 .weekly-bar{position:absolute;top:10px;left:10px;background:#1A1816;color:#fff;border-radius:6px;font-size:10px;font-weight:700;padding:3px 9px;letter-spacing:.05em;text-transform:uppercase;}
-
-/* FOOD CATEGORIES */
 .food-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
 .food-cat{position:relative;height:110px;border-radius:14px;overflow:hidden;cursor:pointer;border:none;padding:0;transition:transform .15s;}
 .food-cat:active{transform:scale(.96);}
@@ -116,8 +89,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .food-cat-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(26,24,22,.78),rgba(26,24,22,.1));display:flex;align-items:flex-end;padding:12px;}
 .food-cat-label{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;line-height:1.2;}
 .food-cat.on{outline:2.5px solid #1A1816;outline-offset:2px;}
-
-/* HERO */
 .hero-full{position:relative;height:460px;overflow:hidden;flex-shrink:0;}
 .hero-full img{width:100%;height:100%;object-fit:cover;display:block;}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,24,22,.05) 0%,rgba(26,24,22,.5) 50%,rgba(26,24,22,.92) 100%);}
@@ -125,8 +96,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .hero-logo{font-family:'Cormorant Garamond',serif;font-size:52px;color:#fff;font-weight:600;letter-spacing:-.5px;line-height:1;}
 .hero-tag{font-size:11px;color:rgba(255,255,255,.6);letter-spacing:.16em;text-transform:uppercase;margin-top:5px;}
 .hero-loc{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:rgba(255,255,255,.85);background:rgba(255,255,255,.14);padding:6px 14px;border-radius:20px;backdrop-filter:blur(8px);}
-
-/* LANDING BUTTONS */
 .landing-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:20px 16px 0;}
 .lbtn{position:relative;border-radius:16px;overflow:hidden;cursor:pointer;border:none;padding:0;transition:transform .15s;}
 .lbtn:active{transform:scale(.97);}
@@ -136,13 +105,9 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .lbtn-sub{font-size:10.5px;color:rgba(255,255,255,.72);margin-top:3px;}
 .lbtn-sm{height:130px;}
 .lbtn-wide{grid-column:1/-1;height:110px;}
-
-/* SECTION HEADER */
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 10px;}
 .sec-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;}
 .cards-list{padding:6px 16px;display:flex;flex-direction:column;gap:14px;}
-
-/* DETAIL */
 .detail-hero{position:relative;height:260px;overflow:hidden;background:#F0EDE8;}
 .detail-hero img{width:100%;height:100%;object-fit:cover;display:block;}
 .detail-hdr{position:sticky;top:0;z-index:30;padding:12px 16px;background:rgba(234,230,224,.95);backdrop-filter:blur(14px);display:flex;align-items:center;gap:10px;}
@@ -211,8 +176,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .star-picker{display:flex;gap:8px;margin:10px 0 14px;}
 .star-pick-btn{background:none;border:none;cursor:pointer;font-size:30px;padding:2px;transition:transform .1s;line-height:1;}
 .star-pick-btn:hover{transform:scale(1.15);}
-
-/* FORM */
 .form-screen{padding:16px 16px 28px;}
 .tab-bar{display:flex;gap:4px;background:#fff;padding:4px;border-radius:12px;margin-bottom:18px;}
 .tab-btn{flex:1;padding:8px 4px;border:none;border-radius:9px;background:transparent;color:#9E9590;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
@@ -231,8 +194,6 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .photo-preview{position:relative;border-radius:10px;overflow:hidden;height:140px;margin-bottom:8px;}
 .photo-preview img{width:100%;height:100%;object-fit:cover;display:block;}
 .photo-remove{position:absolute;top:7px;right:7px;background:rgba(26,24,22,.7);border:none;border-radius:6px;color:#fff;padding:3px 8px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-
-/* AUTH */
 .auth-screen{min-height:100dvh;display:flex;flex-direction:column;background:#EAE6E0;}
 .auth-hero{position:relative;overflow:hidden;}
 .auth-hero img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -245,19 +206,14 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:#DDD9D3;}
 .auth-toggle{text-align:center;margin-top:18px;font-size:13px;color:#9E9590;}
 .auth-toggle span{color:#1A1816;font-weight:600;cursor:pointer;text-decoration:underline;}
-
-/* PROFILE */
 .prof-screen{padding:24px 16px 20px;}
 .prof-av{width:70px;height:70px;border-radius:50%;background:#DDD9D3;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:28px;color:#6B6560;flex-shrink:0;}
 .prof-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid #EAE6E1;cursor:pointer;}
-
-/* MISC */
 .no-res{text-align:center;color:#A09890;font-size:14px;padding:40px 20px;line-height:1.7;}
 .empty-card{text-align:center;padding:28px 20px;background:#fff;border-radius:14px;}
 .loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100dvh;background:#EAE6E0;gap:12px;}
 `;
 
-// ═══ CONSTANTS ═══
 const CUISINES_LIST = ["Malay","Chinese","Indian","Mamak","Japanese","Korean","Western","Italian","Thai","Vietnamese","Seafood","BBQ","Vegetarian","Halal","Beer Restaurant","Hawker/Street Food","Cafe","Bakery","Fast Food","Fusion"];
 const CUISINE_FILTERS = ["All","Malay","Chinese","Indian","Mamak","Japanese","Korean","Western","Cafe","Hawker/Street Food","Seafood"];
 
@@ -276,11 +232,8 @@ const FOOD_CATS = [
   { label:"BBQ",     img:"https://images.unsplash.com/photo-1544025162-d76694265947?w=400&q=80", kw:["bbq","grill","grilled","satay","yakitori","galbi"] },
 ];
 
-const SAMPLE_COORDS = [
-  { lat: 1.4927, lng: 103.7414 }, // JB city centre
-];
+const SAMPLE_COORDS = [{ lat: 1.4927, lng: 103.7414 }];
 
-// ═══ SAMPLE DATA — 5 Johor restaurants ═══
 const SAMPLE = [
   {
     id:"s1", owner_id:"demo",
@@ -290,10 +243,7 @@ const SAMPLE = [
     phone:"607-2234567",
     description:"A JB institution since 1972. Famous for authentic Nasi Padang with over 30 lauk choices daily, slow-cooked rendang and the best gulai kawah in the south.",
     hours:"7:00 AM – 3:00 PM",
-    photos:[
-      "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80",
-      "https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&q=80"
-    ],
+    photos:["https://images.unsplash.com/photo-1512058564366-18510be2db19?w=800&q=80","https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&q=80"],
     lat:1.4632, lng:103.7601,
     menu:[
       { id:"mc1", category:"Rice & Mains", items:[
@@ -306,9 +256,7 @@ const SAMPLE = [
         { id:"mi5", name:"Air Sirap Bandung", price:"2.00", soldOut:false, food_tags:["drinks"], photo:"" }
       ]}
     ],
-    posts:[
-      { id:"p1", type:"Promotion", title:"Early Bird Special", body:"Order before 8AM and get free teh tarik with any rice plate.", photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80" }
-    ],
+    posts:[{ id:"p1", type:"Promotion", title:"Early Bird Special", body:"Order before 8AM and get free teh tarik with any rice plate.", photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80" }],
     reviewsList:[
       { id:"r1", author:"Ahmad F.", rating:5, text:"Best nasi padang in JB. Been coming here for 20 years, quality never drops.", date:"2025-03-08", photo:"https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&q=80" },
       { id:"r2", author:"Siti N.", rating:4, text:"Rendang is amazing, very tender. Queue can be long on weekends.", date:"2025-03-06", photo:"" },
@@ -323,10 +271,7 @@ const SAMPLE = [
     phone:"607-3312233",
     description:"Open-air zi char famous for butter prawns, chilli crab and steamed fish. Family-run for 3 generations, sourcing fresh catch daily from Johor fishermen.",
     hours:"5:00 PM – 11:00 PM",
-    photos:[
-      "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80",
-      "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800&q=80"
-    ],
+    photos:["https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800&q=80","https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800&q=80"],
     lat:1.4755, lng:103.7650,
     menu:[
       { id:"mc3", category:"Seafood", items:[
@@ -339,9 +284,7 @@ const SAMPLE = [
         { id:"mi10", name:"Kangkung Belacan", price:"10.00", soldOut:false, food_tags:["vegetable"], photo:"" }
       ]}
     ],
-    posts:[
-      { id:"p2", type:"Event", title:"Fresh Catch Weekend", body:"Extra fresh shipment every Saturday — first come first served on lobster.", photo:"https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80" }
-    ],
+    posts:[{ id:"p2", type:"Event", title:"Fresh Catch Weekend", body:"Extra fresh shipment every Saturday — first come first served on lobster.", photo:"https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=600&q=80" }],
     reviewsList:[
       { id:"r4", author:"Tan Wei L.", rating:5, text:"Butter prawns are the best I have ever had in JB. Must order!", date:"2025-03-09", photo:"https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&q=80" },
       { id:"r5", author:"Jenny C.", rating:4, text:"Great seafood, fresh and well cooked. A bit pricey but worth it.", date:"2025-03-05", photo:"" },
@@ -356,10 +299,7 @@ const SAMPLE = [
     phone:"607-3323344",
     description:"The go-to 24-hour mamak of JB. Crispy roti canai, mee goreng mamak, and the coldest teh tarik ais in town. Full match screenings every match night.",
     hours:"Open 24 Hours",
-    photos:[
-      "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&q=80",
-      "https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=800&q=80"
-    ],
+    photos:["https://images.unsplash.com/photo-1601050690597-df0568f70950?w=800&q=80","https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=800&q=80"],
     lat:1.4801, lng:103.7622,
     menu:[
       { id:"mc5", category:"Roti & Bread", items:[
@@ -377,9 +317,7 @@ const SAMPLE = [
         { id:"mi18", name:"Milo Ais Tarik", price:"3.00", soldOut:false, food_tags:["drinks","milo"], photo:"" }
       ]}
     ],
-    posts:[
-      { id:"p3", type:"Promotion", title:"Match Night Promo", body:"Free roti canai with every RM15 order during live football matches.", photo:"" }
-    ],
+    posts:[{ id:"p3", type:"Promotion", title:"Match Night Promo", body:"Free roti canai with every RM15 order during live football matches.", photo:"" }],
     reviewsList:[
       { id:"r7", author:"Hafizi A.", rating:5, text:"24 hours and never disappoints. Roti canai always crispy.", date:"2025-03-09", photo:"" },
       { id:"r8", author:"Lim BH", rating:4, text:"Good mamak. Mee goreng is solid. Teh tarik very shiok.", date:"2025-03-04", photo:"https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" }
@@ -393,10 +331,7 @@ const SAMPLE = [
     phone:"607-2356789",
     description:"Johor's most instagrammable brunch spot. Natural light, plants everywhere, and a menu that changes with the seasons. Specialty single-origin coffee roasted in-house.",
     hours:"8:30 AM – 5:00 PM",
-    photos:[
-      "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80",
-      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80"
-    ],
+    photos:["https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=800&q=80","https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80"],
     lat:1.5341, lng:103.7572,
     menu:[
       { id:"mc8", category:"Brunch", items:[
@@ -410,9 +345,7 @@ const SAMPLE = [
         { id:"mi24", name:"Matcha Latte", price:"15.00", soldOut:false, food_tags:["matcha","drinks"], photo:"" }
       ]}
     ],
-    posts:[
-      { id:"p4", type:"Event", title:"Sunday Farmers Market", body:"Local produce market every Sunday 9AM–1PM in front of the cafe.", photo:"https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80" }
-    ],
+    posts:[{ id:"p4", type:"Event", title:"Sunday Farmers Market", body:"Local produce market every Sunday 9AM–1PM in front of the cafe.", photo:"https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&q=80" }],
     reviewsList:[
       { id:"r9", author:"Priya M.", rating:5, text:"Best brunch in JB by far. Eggs Benedict was perfect and coffee is exceptional.", date:"2025-03-08", photo:"https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=400&q=80" },
       { id:"r10", author:"Darren O.", rating:5, text:"Beautiful space, great food, outstanding coffee. Will be back weekly.", date:"2025-03-01", photo:"" }
@@ -426,10 +359,7 @@ const SAMPLE = [
     phone:"607-3387766",
     description:"Premium Japanese-Korean dining at Southkey. Fresh sashimi flown in 3 times a week, authentic tonkotsu ramen and a popular Korean BBQ corner.",
     hours:"11:30 AM – 10:00 PM",
-    photos:[
-      "https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80",
-      "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=80"
-    ],
+    photos:["https://images.unsplash.com/photo-1553621042-f6e147245754?w=800&q=80","https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800&q=80"],
     lat:1.5012, lng:103.7689,
     menu:[
       { id:"mc10", category:"Sushi & Sashimi", items:[
@@ -446,9 +376,7 @@ const SAMPLE = [
         { id:"mi31", name:"Galbi (Beef Short Rib)", price:"58.00", soldOut:false, food_tags:["korean","bbq","beef"], photo:"" }
       ]}
     ],
-    posts:[
-      { id:"p5", type:"Promotion", title:"Weekend Omakase", body:"5-course chef omakase every Friday & Saturday evening. RM 168 per person. Reservation required.", photo:"https://images.unsplash.com/photo-1553621042-f6e147245754?w=600&q=80" }
-    ],
+    posts:[{ id:"p5", type:"Promotion", title:"Weekend Omakase", body:"5-course chef omakase every Friday & Saturday evening. RM 168 per person. Reservation required.", photo:"https://images.unsplash.com/photo-1553621042-f6e147245754?w=600&q=80" }],
     reviewsList:[
       { id:"r11", author:"Yuki T.", rating:5, text:"Freshest sashimi in JB. Dragon roll presentation was beautiful.", date:"2025-03-07", photo:"https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80" },
       { id:"r12", author:"Min J.", rating:5, text:"Korean BBQ was outstanding. Galbi melts in your mouth.", date:"2025-03-03", photo:"" },
@@ -457,8 +385,6 @@ const SAMPLE = [
   }
 ];
 
-
-// ═══ UTILITIES ═══
 let _id = 0;
 const uid = () => `u${_id++}`;
 
@@ -495,7 +421,6 @@ const timeAgo = dateStr => {
   const yr = Math.floor(diff/31536000); return yr===1?"1 year ago":`${yr} years ago`;
 };
 
-// ── AUTO STATUS ───────────────────────────────────────────────
 const parseTimeMins = str => {
   const m = str?.trim().match(/(\d+):(\d+)\s*(AM|PM)/i);
   if (!m) return null;
@@ -524,7 +449,6 @@ const computeStatus = hoursStr => {
   return "closed";
 };
 
-// ═══ SUPABASE DATA LAYER ═══
 const processRestaurant = (r, userLoc) => {
   const coord = userLoc && r.lat && r.lng
     ? { dist: distNum(userLoc.lat, userLoc.lng, r.lat, r.lng) }
@@ -543,8 +467,7 @@ const processRestaurant = (r, userLoc) => {
   }));
   const posts = (r.posts||[]).map(p=>({id:p.id,type:p.type,title:p.title,body:p.body,photo:p.photo||""}));
   return {
-    ...r,
-    menu, reviewsList, posts,
+    ...r, menu, reviewsList, posts,
     distance: coord ? fmtDist(coord.dist) : null,
     _distNum: coord ? coord.dist : 999,
   };
@@ -571,11 +494,8 @@ const loadRestaurantsFromSample = (userLoc) => {
   }).sort((a,b) => a._distNum - b._distNum);
 };
 
-
-// ── PHOTO UPLOAD ──────────────────────────────────────────────
 const uploadPhoto = async (file) => {
   if (!file) return null;
-  // Convert to base64 for demo mode
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => resolve(e.target.result);
@@ -584,7 +504,6 @@ const uploadPhoto = async (file) => {
 };
 
 const PhotoUploader = ({ value, onChange, label="Add Photo" }) => {
-  const ref = useRef(null);
   return (
     <div>
       {value ? (
@@ -604,7 +523,6 @@ const PhotoUploader = ({ value, onChange, label="Add Photo" }) => {
   );
 };
 
-// ═══ ICONS ═══
 const Ic = {
   Home:()=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
   Food:()=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>,
@@ -623,7 +541,6 @@ const Ic = {
   Chevron:()=><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C0BCB8" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>,
 };
 
-// ═══ STARS ═══
 const Stars = ({ rating, size=14 }) => {
   const full = Math.floor(rating), half = rating-full >= 0.3;
   return (
@@ -648,13 +565,9 @@ const RatingRow = ({ reviews, size=13 }) => {
   );
 };
 
-
-
-// ═══ SORT: open first, opening_soon second, closed last ═══
 const statusPriority = h => { const s=computeStatus(h); return s==="open"?0:s==="opening_soon"?1:2; };
 const sortByStatus = arr => [...arr].sort((a,b) => statusPriority(a.hours) - statusPriority(b.hours));
 
-// ═══ STATUS BADGE ═══
 const StatusBadge = ({ hoursStr }) => {
   const status = computeStatus(hoursStr);
   if (status==="open") return <span className="s-open">Open now</span>;
@@ -662,7 +575,6 @@ const StatusBadge = ({ hoursStr }) => {
   return <span className="s-closed">Closed</span>;
 };
 
-// ═══ RESTAURANT CARD ═══
 const RCard = ({ r, onClick, topWeek }) => {
   const status = computeStatus(r.hours);
   const isClosed = status === "closed";
@@ -689,7 +601,6 @@ const RCard = ({ r, onClick, topWeek }) => {
   );
 };
 
-// ═══ DETAIL — GOOGLE BUSINESS PROFILE STYLE ═══
 const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [showRvForm, setShowRvForm] = useState(false);
@@ -702,7 +613,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   const status = computeStatus(r.hours);
   const badgeClass = {Event:"badge-ev",Promotion:"badge-pr",Update:"badge-up"};
 
-  // Load reviews from Supabase on open
   useEffect(() => {
     const loadReviews = async () => {
       if (!sb || r.id.startsWith("s")) return;
@@ -727,10 +637,11 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
     loadReviews();
   }, [r.id]);
 
+  // ── FIX 3: Reviews now sync properly using user.sbId ──
   const submitReview = async () => {
     if (!rvRating || !rvText.trim()) return alert("Please select a rating and write your review.");
     const nr = { id: uid(), author: user?.nickname||"Anonymous", rating: rvRating, text: rvText.trim(), date: new Date().toISOString(), photo: rvPhoto||null };
-    if (sb && !r.id.startsWith("s")) {
+    if (sb && user?.sbId) {
       const { error } = await sb.from("reviews").insert({
         restaurant_id: r.id,
         user_id: user.sbId,
@@ -745,6 +656,7 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
     onUpdateRestaurant({...r, reviewsList: updated});
     setRvRating(0); setRvText(""); setRvPhoto(null); setShowRvForm(false);
   };
+
   const openGMaps = () => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name+", "+r.address)}`, "_blank");
   const openWaze = () => window.open(`https://waze.com/ul?q=${encodeURIComponent(r.name+", "+r.address)}&navigate=yes`, "_blank");
 
@@ -754,12 +666,10 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         <button className="back-btn" onClick={onBack}><Ic.Back/></button>
         <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:19,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",fontWeight:600}}>{r.name}</span>
       </div>
-
       <div className="detail-hero">
         <img src={r.photos[0]} alt={r.name}/>
         <div style={{position:"absolute",inset:0,background:"linear-gradient(to bottom,rgba(0,0,0,0) 40%,rgba(0,0,0,.5) 100%)"}}/>
       </div>
-
       <div className="biz-card">
         <div className="biz-name">{r.name}</div>
         <div className="biz-meta">
@@ -792,7 +702,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         ))}
       </div>
 
-      {/* OVERVIEW */}
       {activeTab==="overview" && (
         <div className="tab-content">
           <p style={{fontSize:14,color:"#5A5550",lineHeight:1.75,marginBottom:20}}>{r.description}</p>
@@ -832,13 +741,11 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         </div>
       )}
 
-      {/* MENU */}
       {activeTab==="menu" && (
         <div className="tab-content">
           {(() => {
             const restStatus = computeStatus(r.hours);
             const isRestOpen = restStatus !== "closed";
-            // Filter: only items with photos; sort open restaurant first
             const catsWithPhotos = (r.menu||[]).map(cat => ({
               ...cat,
               items: (cat.items||[]).filter(item => item.photo)
@@ -870,7 +777,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         </div>
       )}
 
-      {/* REVIEWS */}
       {activeTab==="reviews" && (
         <div className="tab-content">
           {reviews?.length>0 && (
@@ -883,7 +789,7 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
               <div style={{flex:1}}>
                 {[5,4,3,2,1].map(s=>{
                   const cnt = reviews.filter(rv=>rv.rating===s).length;
-                  const pct = r.reviewsList.length ? Math.round(cnt/r.reviewsList.length*100) : 0;
+                  const pct = reviews.length ? Math.round(cnt/reviews.length*100) : 0;
                   return (
                     <div className="bar-row" key={s}>
                       <span style={{fontSize:11,color:"#9E9590",width:8}}>{s}</span>
@@ -935,7 +841,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
         </div>
       )}
 
-      {/* POSTS */}
       {activeTab==="posts" && (
         <div className="tab-content">
           {r.posts?.length>0 ? r.posts.map((p,i)=>(
@@ -954,11 +859,8 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   );
 };
 
-// ═══ FIND FOOD SCREEN ═══
-// ── FIND FOOD RESTAURANT ROW ─────────────────────────────────
 const FindRestRow = ({ r, onRestaurant, matchedItems }) => {
   const items = matchedItems?.length ? matchedItems : r.menu?.flatMap(c=>c.items)||[];
-  const hasPhotos = items.some(i=>i.photo);
   return (
     <div className="find-rest-card">
       <div className="find-rest-hdr" onClick={()=>onRestaurant(r)} style={{cursor:"pointer"}}>
@@ -1014,31 +916,22 @@ const FindFoodScreen = ({ restaurants, onRestaurant, onGoLucky }) => {
 
   const qKws = q.toLowerCase().split(" ").filter(Boolean);
   const catKws = selectedCat?.kw || [];
-  const results = q.length > 1
-    ? searchByKeywords(qKws)
-    : selectedCat
-    ? searchByKeywords(catKws)
-    : [];
-
+  const results = q.length > 1 ? searchByKeywords(qKws) : selectedCat ? searchByKeywords(catKws) : [];
   const showGrid = !q && !selectedCat;
-  // All restaurants with all menu items for browse mode
   const allRestRows = restaurants.map(r => ({r, matchedItems: r.menu?.flatMap(c=>c.items||[])||[]}));
 
   return (
     <div className="screen form-screen">
       <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:30,fontWeight:600,marginBottom:4}}>Find Food</div>
       <div style={{fontSize:13,color:"#9E9590",marginBottom:16,lineHeight:1.5}}>What are you craving right now?</div>
-
       <div className="sbar" style={{marginBottom:12}}>
         <Ic.Search/>
         <input placeholder="Noodles, burgers, sushi..." value={q} onChange={e=>{setQ(e.target.value);setSelectedCat(null);}}/>
         {q && <button onClick={()=>setQ("")} style={{background:"none",border:"none",cursor:"pointer",color:"#9E9590",fontSize:16,lineHeight:1}}>×</button>}
       </div>
-
       <button className="btn btn-ghost btn-full" style={{marginBottom:4,fontSize:13}} onClick={onGoLucky}>
         Not sure? Try Feelin Lucky
       </button>
-
       {showGrid && (
         <>
           <div style={{fontSize:11,fontWeight:600,letterSpacing:".07em",textTransform:"uppercase",color:"#9E9590",margin:"20px 0 10px"}}>Browse by Category</div>
@@ -1046,9 +939,7 @@ const FindFoodScreen = ({ restaurants, onRestaurant, onGoLucky }) => {
             {FOOD_CATS.map(cat => (
               <button key={cat.label} className={`food-cat${selectedCat?.label===cat.label?" on":""}`} onClick={()=>setSelectedCat(cat)}>
                 <img src={cat.img} alt={cat.label}/>
-                <div className="food-cat-overlay">
-                  <div className="food-cat-label">{cat.label}</div>
-                </div>
+                <div className="food-cat-overlay"><div className="food-cat-label">{cat.label}</div></div>
               </button>
             ))}
           </div>
@@ -1058,7 +949,6 @@ const FindFoodScreen = ({ restaurants, onRestaurant, onGoLucky }) => {
           ))}
         </>
       )}
-
       {(q.length > 1 || selectedCat) && (
         <>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"20px 0 12px"}}>
@@ -1088,7 +978,6 @@ const FindFoodScreen = ({ restaurants, onRestaurant, onGoLucky }) => {
   );
 };
 
-// ═══ LUCKY SCREEN ═══
 const LuckyScreen = ({ restaurants, onRestaurant, onGoFindFood }) => {
   const [result, setResult] = useState(null);
   const [spinning, setSpinning] = useState(false);
@@ -1114,19 +1003,15 @@ const LuckyScreen = ({ restaurants, onRestaurant, onGoFindFood }) => {
       <div style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"50px 24px 24px",textAlign:"center"}}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:38,fontWeight:600,marginBottom:6}}>Feelin Lucky?</div>
         <div style={{fontSize:14,color:"#9E9590",marginBottom:36,lineHeight:1.6}}>Let us pick one restaurant near you.</div>
-
         <div style={{width:120,height:120,borderRadius:"50%",border:"1.5px solid #DDD9D3",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:36,fontFamily:"'Cormorant Garamond',serif",fontSize:46,color:spinning?"#B8644A":"#C0BCB6",fontWeight:600}}>
           {spinning ? frames[fi] : "?"}
         </div>
-
         <button className="btn btn-dark" style={{borderRadius:50,padding:"15px 52px",fontSize:16,letterSpacing:".04em"}} onClick={spin} disabled={spinning}>
           {spinning ? "Picking..." : result && result!=="empty" ? "Spin Again" : "Spin"}
         </button>
-
         <button className="btn btn-ghost" style={{marginTop:12,fontSize:13}} onClick={onGoFindFood}>
           Know what you want? Find Food
         </button>
-
         {result==="empty" && <div className="no-res" style={{marginTop:24}}>No restaurants within 15 km yet.</div>}
         {result && result!=="empty" && (
           <div style={{width:"100%",marginTop:32,animation:"popIn .35s cubic-bezier(.175,.885,.32,1.275)"}} key={key}>
@@ -1138,7 +1023,6 @@ const LuckyScreen = ({ restaurants, onRestaurant, onGoFindFood }) => {
   );
 };
 
-// ═══ HOME SCREEN ═══
 const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
   const [mode, setMode] = useState("all");
   const [q, setQ] = useState("");
@@ -1147,7 +1031,6 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
 
   const nearby  = sortByStatus(restaurants.filter(r => (r._distNum||99) <= 15));
   const explore  = sortByStatus(restaurants.filter(r => (r._distNum||99) > 15));
-  // Weekly top: open restaurants ranked by rating, then closed ranked by rating below
   const weekly = [
     ...restaurants.filter(r=>computeStatus(r.hours)!=="closed").sort((a,b)=>avgRating(b.reviewsList)-avgRating(a.reviewsList)),
     ...restaurants.filter(r=>computeStatus(r.hours)==="closed").sort((a,b)=>avgRating(b.reviewsList)-avgRating(a.reviewsList)),
@@ -1174,7 +1057,6 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
           {locLabel && <div className="hero-loc"><Ic.Pin/>{locLabel}</div>}
         </div>
       </div>
-
       <div className="landing-btns">
         <button className="lbtn lbtn-sm" onClick={()=>setSection("nearby")}>
           <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=75" alt=""/>
@@ -1198,7 +1080,6 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
           </div>
         </button>
       </div>
-
       <div style={{padding:"16px 16px 6px"}}>
         <div className="sbar">
           <Ic.Search/>
@@ -1209,7 +1090,6 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
       <div className="chips">
         {CUISINE_FILTERS.map(c=><div key={c} className={`chip${cuisine===c?" on":""}`} onClick={()=>{setCuisine(c);setMode("all");}}>{c}</div>)}
       </div>
-
       <div className="sec-hdr" ref={listRef}>
         <div>
           <div className="sec-title">{mode==="nearby"?"Nearby":mode==="explore"?"Explore":mode==="weekly"?"Weekly Top Reviews":"All Restaurants"}</div>
@@ -1222,7 +1102,6 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
           {mode!=="all" && <button className="btn btn-ghost btn-sm" style={{padding:"5px 10px",fontSize:11}} onClick={()=>setMode("all")}>Show All</button>}
         </div>
       </div>
-
       <div className="cards-list">
         {displayList.length===0
           ? <div className="no-res">No restaurants found.</div>
@@ -1232,9 +1111,9 @@ const HomeScreen = ({ restaurants, onRestaurant, locLabel }) => {
   );
 };
 
-// ═══ AUTH SCREENS ═══
+// ── FIX 1 & 2: Phone validation + duplicate email error ──
 const AuthScreen = ({ onAuth, onGuest }) => {
-  const [mode, setMode] = useState("login"); // login | signup
+  const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
@@ -1246,11 +1125,16 @@ const AuthScreen = ({ onAuth, onGuest }) => {
     if (!email.trim() || !password) return setError("Please enter your email and password.");
     if (mode==="signup" && !nickname.trim()) return setError("Please enter a nickname.");
     if (mode==="signup" && !phone.trim()) return setError("Please enter your phone number.");
+    if (mode==="signup") {
+      const cleanPhone = phone.replace(/[\s-]/g, "");
+      if (!/^601[0-9]{8,9}$/.test(cleanPhone)) {
+        return setError("Phone must be Malaysian format, e.g. 60123456789");
+      }
+    }
     if (password.length < 6) return setError("Password must be at least 6 characters.");
     setLoading(true); setError("");
     try {
       if (!CONFIGURED) {
-        // Demo mode — simulate login
         localStorage.setItem("peckish_demo_user", JSON.stringify({id:"demo_"+Date.now(),nickname:nickname||email.split("@")[0],phone,isGuest:false}));
         onAuth({ id:"demo", nickname:nickname||email.split("@")[0], phone, isGuest:false });
         return;
@@ -1272,7 +1156,11 @@ const AuthScreen = ({ onAuth, onGuest }) => {
         onAuth({ id: data.user.id, sbId: data.user.id, nickname: profile?.nickname||email.split("@")[0], phone: profile?.phone||"", isGuest: false });
       }
     } catch (e) {
-      setError(e.message || "Something went wrong. Please try again.");
+      if (e.message?.toLowerCase().includes("already registered") || e.message?.toLowerCase().includes("already exists") || e.message?.toLowerCase().includes("user already")) {
+        setError("An account with this email already exists. Please sign in instead.");
+      } else {
+        setError(e.message || "Something went wrong. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -1293,7 +1181,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
           <div style={{fontSize:11,color:"rgba(255,255,255,.6)",letterSpacing:".16em",textTransform:"uppercase",marginTop:6}}>Discover food nearby</div>
         </div>
       </div>
-
       <div className="auth-body">
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:26,fontWeight:600,marginBottom:4}}>
           {mode==="login" ? "Welcome back" : "Create account"}
@@ -1301,7 +1188,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
         <div style={{fontSize:13,color:"#9E9590",marginBottom:22}}>
           {mode==="login" ? "Your session will be remembered automatically." : "Sign up to discover food and write reviews."}
         </div>
-
         {mode==="signup" && (
           <div className="inp-group">
             <label className="inp-label">Nickname</label>
@@ -1323,11 +1209,9 @@ const AuthScreen = ({ onAuth, onGuest }) => {
           </div>
         )}
         {error && <div className="inp-error" style={{marginBottom:12}}>{error}</div>}
-
         <button className="btn btn-dark btn-full" onClick={handleSubmit} disabled={loading}>
           {loading ? "Please wait..." : mode==="login" ? "Sign In" : "Create Account"}
         </button>
-
         <div className="divider">or</div>
         <button className="google-btn" onClick={handleGoogle}>
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -1335,7 +1219,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
         </button>
         <div className="divider">or</div>
         <button className="btn btn-ghost btn-full" onClick={onGuest}>Browse as Guest</button>
-
         <div className="auth-toggle">
           {mode==="login" ? <>No account? <span onClick={()=>{setMode("signup");setError("");}}>Create one</span></> : <>Already have one? <span onClick={()=>{setMode("login");setError("");}}>Sign in</span></>}
         </div>
@@ -1344,7 +1227,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
   );
 };
 
-// ═══ PROFILE SCREEN ═══
 const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, onDeleteRestaurant, onLogout }) => {
   const isAdmin = user?.email === ADMIN_EMAIL;
   const mine = isAdmin ? restaurants : restaurants.filter(r => r.owner_id === user.id || r.owner === user.id);
@@ -1356,12 +1238,11 @@ const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, o
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600}}>{user.nickname}</div>
           <div style={{fontSize:13,color:"#9E9590",marginTop:2}}>{user.phone||"No phone added"}</div>
           <div style={{fontSize:11,color:"#B8B2AC",marginTop:2,display:"flex",alignItems:"center",gap:5}}>
-            {user.isGuest ? "Guest Account" : CONFIGURED ? "Signed in" : "Demo Mode — add Supabase credentials"}
+            {user.isGuest ? "Guest Account" : CONFIGURED ? "Signed in" : "Demo Mode"}
             <span style={{width:6,height:6,borderRadius:"50%",background:user.isGuest?"#C0BCB8":CONFIGURED?"#3A9A3A":"#C8880A",display:"inline-block"}}/>
           </div>
         </div>
       </div>
-
       <div style={{marginBottom:28}}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,marginBottom:12}}>My Restaurants</div>
         {mine.length===0 ? (
@@ -1389,7 +1270,6 @@ const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, o
           </>
         )}
       </div>
-
       <div style={{marginBottom:24}}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,marginBottom:10}}>Settings</div>
         {["Edit Profile","Notifications","Privacy Policy"].map(item=>(
@@ -1408,11 +1288,8 @@ const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, o
   );
 };
 
-
-// ═══ WEEKLY HOURS PICKER ═══
 const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const parseWeeklyHours = (str) => {
-  // Parse "Mon:9:00 AM-10:00 PM,Tue:closed,..." or legacy "9:00 AM – 10:00 PM"
   const def = { open:"9:00 AM", close:"10:00 PM", closed:false };
   const result = {};
   DAYS.forEach(d => result[d] = {...def});
@@ -1431,7 +1308,6 @@ const parseWeeklyHours = (str) => {
       }
     });
   } else {
-    // Legacy single hours - apply to all days
     DAYS.forEach(d => {
       if (str.toLowerCase().includes("24")) result[d] = {...def, open:"12:00 AM", close:"11:59 PM", allDay:true};
       else {
@@ -1498,29 +1374,6 @@ const WeeklyHoursPicker = ({ value, onChange }) => {
   );
 };
 
-// ── COMPUTE STATUS FROM WEEKLY HOURS ─────────────────────────
-const computeStatusWeekly = (hoursStr) => {
-  if (!hoursStr) return "closed";
-  // Legacy format fallback
-  if (!hoursStr.includes("Mon:") && !hoursStr.includes("Tue:")) return computeStatus(hoursStr);
-  const days = parseWeeklyHours(hoursStr);
-  const now = new Date();
-  const dayName = DAYS[now.getDay()===0?6:now.getDay()-1];
-  const today = days[dayName];
-  if (!today || today.closed) return "closed";
-  if (today.allDay || (today.open==="12:00 AM" && today.close==="11:59 PM")) return "open";
-  const openM = parseTimeMins(today.open);
-  const closeM = parseTimeMins(today.close);
-  if (openM===null||closeM===null) return "closed";
-  const nowM = now.getHours()*60+now.getMinutes();
-  const isOpen = closeM<openM?(nowM>=openM||nowM<closeM):(nowM>=openM&&nowM<closeM);
-  if (isOpen) return "open";
-  const minsUntilOpen = openM>nowM?openM-nowM:(1440-nowM+openM);
-  if (minsUntilOpen<=30) return "opening_soon";
-  return "closed";
-};
-
-// ═══ RESTAURANT FORM ═══
 const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   const def = {name:"",description:"",address:"",phone:"",cuisines:[],hours:"",photos:[],menu:[],posts:[],reviewsList:[]};
   const [form, setForm] = useState(existing||def);
@@ -1537,7 +1390,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
 
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
   const toggleC = c => upd("cuisines", form.cuisines.includes(c)?form.cuisines.filter(x=>x!==c):[...form.cuisines,c]);
-
   const addCat = () => { if(!catName.trim())return; setMenu([...menu,{id:uid(),category:catName.trim(),items:[]}]); setCatName(""); setShowCF(false); };
   const delCat = cid => setMenu(menu.filter(c=>c.id!==cid));
   const addItem = cid => {
@@ -1547,7 +1399,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   };
   const delItem = (cid,iid) => setMenu(menu.map(c=>c.id===cid?{...c,items:c.items.filter(i=>i.id!==iid)}:c));
   const toggleSO = (cid,iid) => setMenu(menu.map(c=>c.id===cid?{...c,items:c.items.map(i=>i.id===iid?{...i,soldOut:!i.soldOut}:i)}:c));
-
   const save = () => {
     if(!form.name.trim()||!form.address.trim()) return alert("Name and address are required.");
     onSave({...form, id:existing?.id||uid(), owner_id:user.id, owner:user.id, menu, posts, reviewsList:existing?.reviewsList||[]});
@@ -1562,7 +1413,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
       <div className="tab-bar">
         {["info","photos","menu","posts"].map(t=><button key={t} className={`tab-btn${tab===t?" on":""}`} onClick={()=>setTab(t)}>{t.charAt(0).toUpperCase()+t.slice(1)}</button>)}
       </div>
-
       {tab==="info" && <div>
         <div className="inp-group"><label className="inp-label">Restaurant Name</label><input className="inp" placeholder="e.g. Warung Pak Ali" value={form.name} onChange={e=>upd("name",e.target.value)}/></div>
         <div className="inp-group"><label className="inp-label">Description</label><textarea className="inp" placeholder="What makes your place special?" value={form.description} onChange={e=>upd("description",e.target.value)}/></div>
@@ -1574,7 +1424,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
         </div>
         <div className="inp-group"><label className="inp-label">Cuisine Types</label><div className="cuisine-grid">{CUISINES_LIST.map(c=><div key={c} className={`ctag${form.cuisines.includes(c)?" on":""}`} onClick={()=>toggleC(c)}>{c}</div>)}</div></div>
       </div>}
-
       {tab==="photos" && <div>
         <div className="inp-group">
           <label className="inp-label">Add Photo</label>
@@ -1584,7 +1433,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
         </div>
         {form.photos.map((p,i)=><div className="photo-preview" key={i}><img src={p} alt=""/><button className="photo-remove" onClick={()=>upd("photos",form.photos.filter((_,j)=>j!==i))}>Remove</button></div>)}
       </div>}
-
       {tab==="menu" && <div>
         {menu.map(cat=>(
           <div key={cat.id} style={{marginBottom:16}}>
@@ -1622,7 +1470,6 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
           </div>
         ) : <button className="btn btn-outline btn-full" style={{marginTop:4}} onClick={()=>setShowCF(true)}><Ic.Plus/> Add Menu Category</button>}
       </div>}
-
       {tab==="posts" && <div>
         {posts.map((p,i)=>(
           <div className="pcard" key={p.id||i} style={{position:"relative"}}>
@@ -1648,17 +1495,13 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
           </div>
         ) : <button className="btn btn-outline btn-full" onClick={()=>setShowPF(true)}><Ic.Plus/> Add Post</button>}
       </div>}
-
       <div style={{marginTop:24}}><button className="btn btn-dark btn-full" onClick={save}>Save Restaurant</button></div>
     </div>
   );
 };
 
-// ═══════════════════════════════════════════════════════════
-// MAIN APP
-// ═══════════════════════════════════════════════════════════
 export default function App() {
-  const [appState, setAppState] = useState("loading"); // loading | auth | app
+  const [appState, setAppState] = useState("loading");
   const [user, setUser] = useState(null);
   const [restaurants, setRestaurants] = useState([]);
   const [tab, setTab] = useState("home");
@@ -1668,13 +1511,11 @@ export default function App() {
   const [userLoc, setUserLoc] = useState(null);
   const [now, setNow] = useState(new Date());
 
-  // Auto-update time every 60s for status changes
   useEffect(()=>{
     const iv = setInterval(()=>setNow(new Date()), 60000);
     return ()=>clearInterval(iv);
   }, []);
 
-  // Fix service worker cookie issues — unregister all stale SWs
   useEffect(()=>{
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations().then(regs => {
@@ -1683,10 +1524,8 @@ export default function App() {
     }
   }, []);
 
-  // On mount: restore session + get location
   useEffect(()=>{
     const init = async () => {
-      // 1. Try restore session
       if (CONFIGURED && sb) {
         const { data: { session } } = await sb.auth.getSession();
         if (session) {
@@ -1696,12 +1535,10 @@ export default function App() {
         } else {
           setAppState("auth");
         }
-        // Listen for auth changes
         sb.auth.onAuthStateChange(async (event, session) => {
           if (event==="SIGNED_OUT") { setUser(null); setAppState("auth"); }
         });
       } else {
-        // Demo mode: check localStorage
         const stored = localStorage.getItem("peckish_demo_user");
         if (stored) {
           try { setUser(JSON.parse(stored)); setAppState("app"); }
@@ -1711,7 +1548,6 @@ export default function App() {
         }
       }
 
-      // 2. Get location
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           async pos => {
@@ -1737,7 +1573,6 @@ export default function App() {
     if (CONFIGURED && sb) {
       try {
         const data = await loadRestaurantsFromSB(loc);
-        // If Supabase is empty, show sample data so app doesn't look broken
         if (data && data.length > 0) { setRestaurants(data); return; }
       } catch (e) { console.warn("Supabase load failed, using sample data", e); }
     }
@@ -1745,8 +1580,7 @@ export default function App() {
   };
 
   const handleAuth = (u) => {
-    setUser(u);
-    setAppState("app");
+    setUser(u); setAppState("app");
     if (!CONFIGURED) localStorage.setItem("peckish_demo_user", JSON.stringify(u));
   };
   const handleGuest = () => {
@@ -1774,7 +1608,6 @@ export default function App() {
     { id:"profile", label:"Profile",    Icon:Ic.User  },
   ];
 
-  // ── RENDER ──
   if (appState==="loading") return (
     <><style>{FONTS}{CSS}</style>
     <div className="app">
