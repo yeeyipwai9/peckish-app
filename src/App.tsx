@@ -483,14 +483,12 @@ const loadRestaurantsFromSB = async (userLoc) => {
 };
 
 const loadRestaurantsFromSample = (userLoc) => {
-  const fallbackDist = [0.8, 2.1, 1.4, 3.7, 5.2];
-  return SAMPLE.map((r,i) => {
-    const c = SAMPLE_COORDS[i];
-    if (userLoc && c) {
-      const d = distNum(userLoc.lat, userLoc.lng, c.lat, c.lng);
+  return SAMPLE.map((r) => {
+    if (userLoc && r.lat && r.lng) {
+      const d = distNum(userLoc.lat, userLoc.lng, r.lat, r.lng);
       return { ...r, distance: fmtDist(d), _distNum: d };
     }
-    return { ...r, distance: `${fallbackDist[i]} km`, _distNum: fallbackDist[i] };
+    return { ...r, distance: null, _distNum: 999 };
   }).sort((a,b) => a._distNum - b._distNum);
 };
 
@@ -641,7 +639,7 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   const submitReview = async () => {
     if (!rvRating || !rvText.trim()) return alert("Please select a rating and write your review.");
     const nr = { id: uid(), author: user?.nickname||"Anonymous", rating: rvRating, text: rvText.trim(), date: new Date().toISOString(), photo: rvPhoto||null };
-    if (sb && user?.sbId) {
+    if (sb && user?.sbId && !r.id.startsWith("s")) {
       const { error } = await sb.from("reviews").insert({
         restaurant_id: r.id,
         user_id: user.sbId,
@@ -1374,8 +1372,117 @@ const WeeklyHoursPicker = ({ value, onChange }) => {
   );
 };
 
+// ═══ MAP PICKER (Leaflet, merchant-only) ═══
+const MapPicker = ({ lat, lng, onLocationChange }) => {
+  const mapRef = useRef(null);
+  const leafletMap = useRef(null);
+  const markerRef = useRef(null);
+  const [loaded, setLoaded] = useState(false);
+  const [locating, setLocating] = useState(false);
+
+  // Default centre: Johor Bahru if no coords yet
+  const initLat = lat || 1.4927;
+  const initLng = lng || 103.7414;
+
+  useEffect(() => {
+    // Load Leaflet CSS
+    if (!document.getElementById("leaflet-css")) {
+      const link = document.createElement("link");
+      link.id = "leaflet-css";
+      link.rel = "stylesheet";
+      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      document.head.appendChild(link);
+    }
+    // Load Leaflet JS
+    if (window.L) { setLoaded(true); return; }
+    const script = document.createElement("script");
+    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.onload = () => setLoaded(true);
+    document.head.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (!loaded || !mapRef.current) return;
+    if (leafletMap.current) return; // already initialised
+
+    const L = window.L;
+    const map = L.map(mapRef.current, { zoomControl: true }).setView([initLat, initLng], 16);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "© OpenStreetMap contributors"
+    }).addTo(map);
+
+    // Custom red pin icon
+    const icon = L.divIcon({
+      className: "",
+      html: `<div style="width:28px;height:28px;background:#B8644A;border:3px solid #fff;border-radius:50% 50% 50% 0;transform:rotate(-45deg);box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 28],
+    });
+
+    const marker = L.marker([initLat, initLng], { draggable: true, icon }).addTo(map);
+    marker.on("dragend", () => {
+      const pos = marker.getLatLng();
+      onLocationChange(pos.lat, pos.lng);
+    });
+    map.on("click", (e) => {
+      marker.setLatLng(e.latlng);
+      onLocationChange(e.latlng.lat, e.latlng.lng);
+    });
+
+    leafletMap.current = map;
+    markerRef.current = marker;
+  }, [loaded]);
+
+  // Update marker if lat/lng changes externally (e.g. after geocode)
+  useEffect(() => {
+    if (!markerRef.current || !lat || !lng) return;
+    markerRef.current.setLatLng([lat, lng]);
+    leafletMap.current?.setView([lat, lng], 17);
+  }, [lat, lng]);
+
+  const useMyLocation = () => {
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude, longitude } = pos.coords;
+        onLocationChange(latitude, longitude);
+        setLocating(false);
+      },
+      () => { alert("Could not get your location."); setLocating(false); }
+    );
+  };
+
+  return (
+    <div>
+      <div style={{display:"flex",gap:8,marginBottom:8}}>
+        <button type="button" className="btn btn-ghost btn-sm" style={{fontSize:12,gap:5}} onClick={useMyLocation} disabled={locating}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+          {locating ? "Locating..." : "Use my location"}
+        </button>
+        {lat && lng && (
+          <span style={{fontSize:11,color:"#9E9590",alignSelf:"center"}}>
+            {lat.toFixed(5)}, {lng.toFixed(5)} ✓
+          </span>
+        )}
+      </div>
+      {!loaded && (
+        <div style={{height:260,background:"#F0EDE8",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,color:"#9E9590"}}>
+          Loading map...
+        </div>
+      )}
+      <div
+        ref={mapRef}
+        style={{height:260,borderRadius:12,overflow:"hidden",border:"1.5px solid #DDD9D3",display:loaded?"block":"none"}}
+      />
+      <div style={{fontSize:11,color:"#9E9590",marginTop:6,textAlign:"center"}}>
+        Drag the pin or tap the map to set exact location
+      </div>
+    </div>
+  );
+};
+
 const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
-  const def = {name:"",description:"",address:"",phone:"",cuisines:[],hours:"",photos:[],menu:[],posts:[],reviewsList:[]};
+  const def = {name:"",description:"",address:"",phone:"",cuisines:[],hours:"",photos:[],menu:[],posts:[],reviewsList:[],lat:null,lng:null};
   const [form, setForm] = useState(existing||def);
   const [menu, setMenu] = useState(existing?.menu||[]);
   const [posts, setPosts] = useState(existing?.posts||[]);
@@ -1387,8 +1494,25 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   const [catName, setCatName] = useState("");
   const [showCF, setShowCF] = useState(false);
   const [itemForm, setItemForm] = useState({name:"",price:"",soldOut:false,food_tags:[]});
+  const geocodeTimer = useRef(null);
 
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
+
+  // Auto-geocode address after user stops typing (1.5s debounce)
+  const handleAddressChange = (val) => {
+    upd("address", val);
+    clearTimeout(geocodeTimer.current);
+    if (val.trim().length < 8) return;
+    geocodeTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(val)}&countrycodes=my&limit=1`);
+        const data = await res.json();
+        if (data[0]) {
+          setForm(f => ({...f, lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon)}));
+        }
+      } catch {}
+    }, 1500);
+  };
   const toggleC = c => upd("cuisines", form.cuisines.includes(c)?form.cuisines.filter(x=>x!==c):[...form.cuisines,c]);
   const addCat = () => { if(!catName.trim())return; setMenu([...menu,{id:uid(),category:catName.trim(),items:[]}]); setCatName(""); setShowCF(false); };
   const delCat = cid => setMenu(menu.filter(c=>c.id!==cid));
@@ -1416,7 +1540,19 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
       {tab==="info" && <div>
         <div className="inp-group"><label className="inp-label">Restaurant Name</label><input className="inp" placeholder="e.g. Warung Pak Ali" value={form.name} onChange={e=>upd("name",e.target.value)}/></div>
         <div className="inp-group"><label className="inp-label">Description</label><textarea className="inp" placeholder="What makes your place special?" value={form.description} onChange={e=>upd("description",e.target.value)}/></div>
-        <div className="inp-group"><label className="inp-label">Address</label><input className="inp" placeholder="e.g. 12, Jalan Ampang, KL" value={form.address} onChange={e=>upd("address",e.target.value)}/></div>
+        <div className="inp-group">
+          <label className="inp-label">Address</label>
+          <input className="inp" placeholder="e.g. 12, Jalan Ampang, KL" value={form.address} onChange={e=>handleAddressChange(e.target.value)}/>
+          <div style={{fontSize:11,color:"#9E9590",marginTop:5}}>Type your address — map will auto-centre. Then drag pin to exact spot.</div>
+        </div>
+        <div className="inp-group">
+          <label className="inp-label">Pin Location on Map</label>
+          <MapPicker
+            lat={form.lat}
+            lng={form.lng}
+            onLocationChange={(lat,lng) => setForm(f=>({...f, lat, lng}))}
+          />
+        </div>
         <div className="inp-group"><label className="inp-label">WhatsApp Number</label><input className="inp" placeholder="60123456789" value={form.phone} onChange={e=>upd("phone",e.target.value)}/></div>
         <div className="inp-group">
           <label className="inp-label">Business Hours</label>
