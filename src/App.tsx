@@ -194,7 +194,7 @@ textarea.inp{resize:vertical;min-height:90px;line-height:1.6;}
 .photo-preview{position:relative;border-radius:10px;overflow:hidden;height:140px;margin-bottom:8px;}
 .photo-preview img{width:100%;height:100%;object-fit:cover;display:block;}
 .photo-remove{position:absolute;top:7px;right:7px;background:rgba(26,24,22,.7);border:none;border-radius:6px;color:#fff;padding:3px 8px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.auth-screen{min-height:100dvh;display:flex;flex-direction:column;background:#EAE6E0;}
+.auth-screen{min-height:100dvh;display:flex;flex-direction:column;background:#EAE6E0;max-width:430px;width:100%;margin:0 auto;}
 .auth-hero{position:relative;overflow:hidden;}
 .auth-hero img{width:100%;height:100%;object-fit:cover;display:block;}
 .auth-hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,24,22,0) 30%,rgba(26,24,22,.88));}
@@ -1194,41 +1194,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  // OAuth phone collection step
-  const [oauthUser, setOauthUser] = useState(null);
-  const [oauthPhone, setOauthPhone] = useState("");
-  const [oauthNickname, setOauthNickname] = useState("");
-
-  // Check if returning from OAuth redirect
-  useEffect(() => {
-    if (!sb) return;
-    const checkOAuth = async () => {
-      const { data: { session } } = await sb.auth.getSession();
-      if (!session) return;
-      const { data: profile } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
-      if (profile?.phone) {
-        // Already has phone — complete login
-        onAuth({ id: session.user.id, sbId: session.user.id, nickname: profile.nickname||session.user.user_metadata?.full_name||session.user.email?.split("@")[0], phone: profile.phone, avatar: profile.avatar||session.user.user_metadata?.avatar_url||null, isGuest: false });
-      } else {
-        // Needs phone collection
-        setOauthUser(session.user);
-        setOauthNickname(profile?.nickname||session.user.user_metadata?.full_name||session.user.email?.split("@")[0]||"");
-      }
-    };
-    checkOAuth();
-  }, []);
-
-  const completeOAuth = async () => {
-    if (!oauthPhone.trim()) return setError("Please enter your phone number.");
-    const cleanPhone = oauthPhone.replace(/[\s-]/g,"");
-    if (!/^601[0-9]{8,9}$/.test(cleanPhone)) return setError("Phone must be Malaysian format, e.g. 60123456789");
-    setLoading(true);
-    try {
-      await sb.from("profiles").upsert({ id: oauthUser.id, nickname: oauthNickname.trim()||oauthUser.email?.split("@")[0], phone: cleanPhone, avatar: oauthUser.user_metadata?.avatar_url||null });
-      onAuth({ id: oauthUser.id, sbId: oauthUser.id, nickname: oauthNickname.trim(), phone: cleanPhone, avatar: oauthUser.user_metadata?.avatar_url||null, isGuest: false });
-    } catch(e) { setError(e.message||"Something went wrong."); }
-    finally { setLoading(false); }
-  };
 
   const handleSubmit = async () => {
     if (!email.trim() || !password) return setError("Please enter your email and password.");
@@ -1284,37 +1249,6 @@ const AuthScreen = ({ onAuth, onGuest }) => {
     if (!CONFIGURED) return alert("Please configure Supabase to use Facebook sign-in.");
     await sb.auth.signInWithOAuth({ provider: "facebook", options: { redirectTo: "https://peckish-app-beta.vercel.app" } });
   };
-
-  // OAuth phone collection screen
-  if (oauthUser) {
-    return (
-      <div className="auth-screen">
-        <div className="auth-hero" style={{height:"30vh"}}>
-          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85" alt="Food"/>
-          <div className="auth-hero-ov"/>
-          <div className="auth-hero-txt">
-            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,color:"#fff",fontWeight:600}}>Peckish</div>
-          </div>
-        </div>
-        <div className="auth-body">
-          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,marginBottom:4}}>One last step</div>
-          <div style={{fontSize:13,color:"#9E9590",marginBottom:22}}>We just need a couple more details to complete your profile.</div>
-          <div className="inp-group">
-            <label className="inp-label">Your Name</label>
-            <input className="inp" placeholder="What should we call you?" value={oauthNickname} onChange={e=>setOauthNickname(e.target.value)}/>
-          </div>
-          <div className="inp-group">
-            <label className="inp-label">Phone Number</label>
-            <input className="inp" placeholder="e.g. 60123456789" value={oauthPhone} onChange={e=>setOauthPhone(e.target.value)}/>
-          </div>
-          {error && <div className="inp-error" style={{marginBottom:12}}>{error}</div>}
-          <button className="btn btn-dark btn-full" onClick={completeOAuth} disabled={loading}>
-            {loading ? "Saving..." : "Complete Sign Up"}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="auth-screen">
@@ -2186,8 +2120,16 @@ export default function App() {
   };
   const handleCompleteProfile = async (nickname, phone) => {
     const su = pendingOAuthUser.sbUser;
-    await sb.from("profiles").upsert({ id: su.id, nickname, phone, avatar: su.user_metadata?.avatar_url||null });
-    setUser({ id: su.id, sbId: su.id, nickname, phone, avatar: su.user_metadata?.avatar_url||null, isGuest: false });
+    try {
+      const { error } = await sb.from("profiles").upsert({ 
+        id: su.id, 
+        nickname: nickname.trim(), 
+        phone, 
+        avatar: su.user_metadata?.avatar_url||null 
+      });
+      if (error) { alert("Could not save profile: " + error.message); return; }
+    } catch(e) { alert("Something went wrong saving your profile."); return; }
+    setUser({ id: su.id, sbId: su.id, nickname: nickname.trim(), phone, avatar: su.user_metadata?.avatar_url||null, isGuest: false });
     setPendingOAuthUser(null);
     setAppState("app");
   };
