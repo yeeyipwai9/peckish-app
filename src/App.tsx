@@ -1265,12 +1265,12 @@ const AuthScreen = ({ onAuth, onGuest }) => {
 
   const handleGoogle = async () => {
     if (!CONFIGURED) return alert("Please configure Supabase to use Google sign-in.");
-    await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href } });
+    await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: "https://peckish-app-beta.vercel.app" } });
   };
 
   const handleFacebook = async () => {
     if (!CONFIGURED) return alert("Please configure Supabase to use Facebook sign-in.");
-    await sb.auth.signInWithOAuth({ provider: "facebook", options: { redirectTo: window.location.href } });
+    await sb.auth.signInWithOAuth({ provider: "facebook", options: { redirectTo: "https://peckish-app-beta.vercel.app" } });
   };
 
   // OAuth phone collection screen
