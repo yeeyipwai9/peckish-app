@@ -1992,7 +1992,6 @@ const CompleteProfileScreen = ({ defaultName, avatar, onComplete }) => {
     if (!/^601[0-9]{8,9}$/.test(clean)) return setError("Phone must be Malaysian format, e.g. 60123456789");
     setLoading(true);
     await onComplete(nickname.trim(), clean);
-    setLoading(false);
   };
 
   return (
@@ -2105,18 +2104,25 @@ export default function App() {
   }, []);
 
   const loadRests = async (loc) => {
+    const samples = loadRestaurantsFromSample(loc);
     if (CONFIGURED && sb) {
       try {
         const data = await loadRestaurantsFromSB(loc);
-        if (data && data.length > 0) { setRestaurants(data); return; }
+        if (data && data.length > 0) {
+          // Merge real + sample, real ones first
+          const ids = new Set(data.map(r => r.id));
+          const merged = [...data, ...samples.filter(s => !ids.has(s.id))];
+          setRestaurants(merged); return;
+        }
       } catch (e) { console.warn("Supabase load failed, using sample data", e); }
     }
-    setRestaurants(loadRestaurantsFromSample(loc));
+    setRestaurants(samples);
   };
 
   const handleAuth = (u) => {
     setUser(u); setAppState("app");
     if (!CONFIGURED) localStorage.setItem("peckish_demo_user", JSON.stringify(u));
+    loadRests(userLoc);
   };
   const handleCompleteProfile = async (nickname, phone) => {
     const su = pendingOAuthUser.sbUser;
@@ -2124,18 +2130,19 @@ export default function App() {
       const { error } = await sb.from("profiles").upsert({ 
         id: su.id, 
         nickname: nickname.trim(), 
-        phone, 
-        avatar: su.user_metadata?.avatar_url||null 
+        phone
       });
       if (error) { alert("Could not save profile: " + error.message); return; }
     } catch(e) { alert("Something went wrong saving your profile."); return; }
     setUser({ id: su.id, sbId: su.id, nickname: nickname.trim(), phone, avatar: su.user_metadata?.avatar_url||null, isGuest: false });
     setPendingOAuthUser(null);
     setAppState("app");
+    loadRests(userLoc);
   };
   const handleGuest = () => {
     const g = { id:"guest", nickname:"Guest", phone:"", isGuest:true };
     setUser(g); setAppState("app");
+    loadRests(userLoc);
   };
   const handleLogout = async () => {
     if (CONFIGURED && sb) await sb.auth.signOut();
