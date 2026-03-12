@@ -513,7 +513,7 @@ const PhotoUploader = ({ value, onChange, label="Add Photo" }) => {
         <label className="upload-btn" style={{cursor:"pointer"}}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           {label}
-          <input type="file" accept="image/*" capture="environment" style={{display:"none"}}
+          <input type="file" accept="image/*" style={{display:"none"}}
             onChange={async e => { if(e.target.files[0]) onChange(await uploadPhoto(e.target.files[0])); }}/>
         </label>
       )}
@@ -607,9 +607,14 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   const [rvText, setRvText] = useState("");
   const [rvPhoto, setRvPhoto] = useState(null);
   const [reviews, setReviews] = useState(r.reviewsList||[]);
+  const [postComments, setPostComments] = useState({});   // {postId: [{id,author,text,date}]}
+  const [commentDraft, setCommentDraft] = useState({});   // {postId: text}
+  const [replyDraft, setReplyDraft] = useState({});       // {reviewId: text}
+  const [showReply, setShowReply] = useState({});         // {reviewId: bool}
   const avg = avgRating(reviews);
   const status = computeStatus(r.hours);
   const badgeClass = {Event:"badge-ev",Promotion:"badge-pr",Update:"badge-up"};
+  const isMerchant = user && !user.isGuest && (r.owner_id===user.id||r.owner===user.id);
 
   useEffect(() => {
     const loadReviews = async () => {
@@ -617,7 +622,6 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
       const { data } = await sb.from("reviews")
         .select("*, profiles(nickname)")
         .eq("restaurant_id", r.id)
-        .eq("hidden", false)
         .order("created_at", { ascending: false });
       if (data && data.length > 0) {
         const mapped = data.map(rv => ({
@@ -834,6 +838,30 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
               <Stars rating={rv.rating} size={13}/>
               <div style={{fontSize:14,color:"#4A4540",lineHeight:1.65,marginTop:8}}>{rv.text}</div>
               {rv.photo && <img src={rv.photo} alt="Review photo" style={{width:"100%",maxHeight:200,objectFit:"cover",borderRadius:10,marginTop:10}}/>}
+              {rv.reply && (
+                <div style={{background:"#F5F2EE",borderRadius:8,padding:"10px 12px",marginTop:10,borderLeft:"3px solid #B8644A"}}>
+                  <div style={{fontSize:11,fontWeight:700,color:"#B8644A",marginBottom:4}}>Owner Reply</div>
+                  <div style={{fontSize:13,color:"#4A4540",lineHeight:1.6}}>{rv.reply}</div>
+                </div>
+              )}
+              {isMerchant && !rv.reply && (
+                showReply[rv.id] ? (
+                  <div style={{marginTop:8}}>
+                    <textarea className="inp" placeholder="Reply to this review..." value={replyDraft[rv.id]||""} onChange={e=>setReplyDraft(d=>({...d,[rv.id]:e.target.value}))} style={{fontSize:13,marginBottom:6}}/>
+                    <div style={{display:"flex",gap:6}}>
+                      <button className="btn btn-dark btn-sm" style={{fontSize:12}} onClick={()=>{
+                        if(!(replyDraft[rv.id]||"").trim())return;
+                        const updated = reviews.map(x=>x.id===rv.id?{...x,reply:replyDraft[rv.id].trim()}:x);
+                        setReviews(updated); onUpdateRestaurant({...r,reviewsList:updated});
+                        setReplyDraft(d=>({...d,[rv.id]:""})); setShowReply(s=>({...s,[rv.id]:false}));
+                      }}>Post Reply</button>
+                      <button className="btn btn-ghost btn-sm" style={{fontSize:12}} onClick={()=>setShowReply(s=>({...s,[rv.id]:false}))}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <button style={{marginTop:8,background:"none",border:"none",fontSize:12,color:"#B8644A",cursor:"pointer",fontWeight:600,padding:0}} onClick={()=>setShowReply(s=>({...s,[rv.id]:true}))}>↩ Reply</button>
+                )
+              )}
             </div>
           )) : <div className="no-res">No reviews yet. Be the first.</div>}
         </div>
@@ -848,6 +876,42 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
                 <span className={`pbadge ${badgeClass[p.type]||"badge-up"}`}>{p.type}</span>
                 <div className="pcard-title">{p.title}</div>
                 <div style={{fontSize:13.5,color:"#5A5550",lineHeight:1.65}}>{p.body}</div>
+                {(p.promoStart||p.promoEnd) && (
+                  <div style={{display:"inline-flex",alignItems:"center",gap:5,marginTop:8,background:"#F5F2EE",borderRadius:20,padding:"4px 10px",fontSize:11,color:"#6B6560",fontWeight:600}}>
+                    📅 {p.promoStart||"?"} → {p.promoEnd||"?"}
+                  </div>
+                )}
+                {/* Comments */}
+                <div style={{marginTop:14,borderTop:"1px solid #F0EDE8",paddingTop:12}}>
+                  {(postComments[p.id]||[]).map((c,ci)=>(
+                    <div key={c.id||ci} style={{marginBottom:10}}>
+                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
+                        <span style={{fontSize:12,fontWeight:700}}>{c.author}</span>
+                        <span style={{fontSize:11,color:"#B0A89E"}}>{timeAgo(c.date)}</span>
+                      </div>
+                      <div style={{fontSize:13,color:"#4A4540",lineHeight:1.5}}>{c.text}</div>
+                    </div>
+                  ))}
+                  {user && !user.isGuest ? (
+                    <div style={{display:"flex",gap:6,marginTop:4}}>
+                      <input className="inp" placeholder="Add a comment…" value={commentDraft[p.id]||""} style={{flex:1,padding:"7px 10px",fontSize:13}}
+                        onChange={e=>setCommentDraft(d=>({...d,[p.id]:e.target.value}))}
+                        onKeyDown={e=>{
+                          if(e.key==="Enter"&&(commentDraft[p.id]||"").trim()){
+                            const nc={id:uid(),author:user.nickname||"Anonymous",text:commentDraft[p.id].trim(),date:new Date().toISOString()};
+                            setPostComments(pc=>({...pc,[p.id]:[...(pc[p.id]||[]),nc]}));
+                            setCommentDraft(d=>({...d,[p.id]:""}));
+                          }
+                        }}/>
+                      <button className="btn btn-dark btn-sm" style={{fontSize:12,whiteSpace:"nowrap"}} onClick={()=>{
+                        if(!(commentDraft[p.id]||"").trim())return;
+                        const nc={id:uid(),author:user.nickname||"Anonymous",text:commentDraft[p.id].trim(),date:new Date().toISOString()};
+                        setPostComments(pc=>({...pc,[p.id]:[...(pc[p.id]||[]),nc]}));
+                        setCommentDraft(d=>({...d,[p.id]:""}));
+                      }}>Send</button>
+                    </div>
+                  ) : <div style={{fontSize:12,color:"#B0A89E",marginTop:4}}>Sign in to comment</div>}
+                </div>
               </div>
             </div>
           )) : <div className="no-res">No posts published yet.</div>}
@@ -1118,6 +1182,41 @@ const AuthScreen = ({ onAuth, onGuest }) => {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  // OAuth phone collection step
+  const [oauthUser, setOauthUser] = useState(null);
+  const [oauthPhone, setOauthPhone] = useState("");
+  const [oauthNickname, setOauthNickname] = useState("");
+
+  // Check if returning from OAuth redirect
+  useEffect(() => {
+    if (!sb) return;
+    const checkOAuth = async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+      const { data: profile } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+      if (profile?.phone) {
+        // Already has phone — complete login
+        onAuth({ id: session.user.id, sbId: session.user.id, nickname: profile.nickname||session.user.user_metadata?.full_name||session.user.email?.split("@")[0], phone: profile.phone, avatar: profile.avatar||session.user.user_metadata?.avatar_url||null, isGuest: false });
+      } else {
+        // Needs phone collection
+        setOauthUser(session.user);
+        setOauthNickname(profile?.nickname||session.user.user_metadata?.full_name||session.user.email?.split("@")[0]||"");
+      }
+    };
+    checkOAuth();
+  }, []);
+
+  const completeOAuth = async () => {
+    if (!oauthPhone.trim()) return setError("Please enter your phone number.");
+    const cleanPhone = oauthPhone.replace(/[\s-]/g,"");
+    if (!/^601[0-9]{8,9}$/.test(cleanPhone)) return setError("Phone must be Malaysian format, e.g. 60123456789");
+    setLoading(true);
+    try {
+      await sb.from("profiles").upsert({ id: oauthUser.id, nickname: oauthNickname.trim()||oauthUser.email?.split("@")[0], phone: cleanPhone, avatar: oauthUser.user_metadata?.avatar_url||null });
+      onAuth({ id: oauthUser.id, sbId: oauthUser.id, nickname: oauthNickname.trim(), phone: cleanPhone, avatar: oauthUser.user_metadata?.avatar_url||null, isGuest: false });
+    } catch(e) { setError(e.message||"Something went wrong."); }
+    finally { setLoading(false); }
+  };
 
   const handleSubmit = async () => {
     if (!email.trim() || !password) return setError("Please enter your email and password.");
@@ -1151,7 +1250,7 @@ const AuthScreen = ({ onAuth, onGuest }) => {
         const { data, error: err } = await sb.auth.signInWithPassword({ email: email.trim(), password });
         if (err) throw err;
         const { data: profile } = await sb.from("profiles").select("*").eq("id", data.user.id).single();
-        onAuth({ id: data.user.id, sbId: data.user.id, nickname: profile?.nickname||email.split("@")[0], phone: profile?.phone||"", isGuest: false });
+        onAuth({ id: data.user.id, sbId: data.user.id, nickname: profile?.nickname||email.split("@")[0], phone: profile?.phone||"", avatar: profile?.avatar||null, isGuest: false });
       }
     } catch (e) {
       if (e.message?.toLowerCase().includes("already registered") || e.message?.toLowerCase().includes("already exists") || e.message?.toLowerCase().includes("user already")) {
@@ -1166,8 +1265,44 @@ const AuthScreen = ({ onAuth, onGuest }) => {
 
   const handleGoogle = async () => {
     if (!CONFIGURED) return alert("Please configure Supabase to use Google sign-in.");
-    await sb.auth.signInWithOAuth({ provider: "google" });
+    await sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.href } });
   };
+
+  const handleFacebook = async () => {
+    if (!CONFIGURED) return alert("Please configure Supabase to use Facebook sign-in.");
+    await sb.auth.signInWithOAuth({ provider: "facebook", options: { redirectTo: window.location.href } });
+  };
+
+  // OAuth phone collection screen
+  if (oauthUser) {
+    return (
+      <div className="auth-screen">
+        <div className="auth-hero" style={{height:"30vh"}}>
+          <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85" alt="Food"/>
+          <div className="auth-hero-ov"/>
+          <div className="auth-hero-txt">
+            <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,color:"#fff",fontWeight:600}}>Peckish</div>
+          </div>
+        </div>
+        <div className="auth-body">
+          <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600,marginBottom:4}}>One last step</div>
+          <div style={{fontSize:13,color:"#9E9590",marginBottom:22}}>We just need a couple more details to complete your profile.</div>
+          <div className="inp-group">
+            <label className="inp-label">Your Name</label>
+            <input className="inp" placeholder="What should we call you?" value={oauthNickname} onChange={e=>setOauthNickname(e.target.value)}/>
+          </div>
+          <div className="inp-group">
+            <label className="inp-label">Phone Number</label>
+            <input className="inp" placeholder="e.g. 60123456789" value={oauthPhone} onChange={e=>setOauthPhone(e.target.value)}/>
+          </div>
+          {error && <div className="inp-error" style={{marginBottom:12}}>{error}</div>}
+          <button className="btn btn-dark btn-full" onClick={completeOAuth} disabled={loading}>
+            {loading ? "Saving..." : "Complete Sign Up"}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-screen">
@@ -1215,6 +1350,10 @@ const AuthScreen = ({ onAuth, onGuest }) => {
           <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Continue with Google
         </button>
+        <button className="google-btn" style={{marginTop:8,background:"#1877F2",color:"#fff",border:"none"}} onClick={handleFacebook}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Continue with Facebook
+        </button>
         <div className="divider">or</div>
         <button className="btn btn-ghost btn-full" onClick={onGuest}>Browse as Guest</button>
         <div className="auth-toggle">
@@ -1231,7 +1370,9 @@ const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, o
   return (
     <div className="screen prof-screen">
       <div style={{display:"flex",alignItems:"center",gap:14,marginBottom:28}}>
-        <div className="prof-av">{user.nickname?.[0]?.toUpperCase()||"U"}</div>
+        {user.avatar
+          ? <img src={user.avatar} alt="" style={{width:60,height:60,borderRadius:"50%",objectFit:"cover",border:"2px solid #DDD9D3",flexShrink:0}}/>
+          : <div className="prof-av">{user.nickname?.[0]?.toUpperCase()||"U"}</div>}
         <div>
           <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:24,fontWeight:600}}>{user.nickname}</div>
           <div style={{fontSize:13,color:"#9E9590",marginTop:2}}>{user.phone||"No phone added"}</div>
@@ -1481,6 +1622,246 @@ const MapPicker = ({ lat, lng, onLocationChange }) => {
   );
 };
 
+// ═══ SIMPLE HOURS PICKER ═══
+const HOUR_OPTS = [];
+for (let h=0;h<24;h++) {
+  for (let m=0;m<60;m+=30) {
+    const ap = h<12?"AM":"PM"; const h12 = h===0?12:h>12?h-12:h;
+    HOUR_OPTS.push(`${h12}:${m===0?"00":"30"} ${ap}`);
+  }
+}
+const ALL_DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+const SimpleHoursPicker = ({ value, onChange }) => {
+  const [mode, setMode] = useState("simple");
+  const [open, setOpen] = useState("9:00 AM");
+  const [close, setClose] = useState("10:00 PM");
+  const [is24, setIs24] = useState(false);
+  const [offDays, setOffDays] = useState([]);
+  const [hasBreak, setHasBreak] = useState(false);
+  const [breakStart, setBreakStart] = useState("3:00 PM");
+  const [breakEnd, setBreakEnd] = useState("5:00 PM");
+  const [advDays, setAdvDays] = useState(() => {
+    const def = {}; ALL_DAYS.forEach(d => def[d]={open:"9:00 AM",close:"10:00 PM",closed:false,hasBreak:false,breakStart:"3:00 PM",breakEnd:"5:00 PM"}); return def;
+  });
+
+  useEffect(() => {
+    if (!value) return;
+    if (value.toLowerCase().includes("24")) { setIs24(true); return; }
+    if (value.includes("Mon:")) {
+      setMode("advanced");
+      const parsed = {}; ALL_DAYS.forEach(d => parsed[d]={open:"9:00 AM",close:"10:00 PM",closed:false,hasBreak:false,breakStart:"3:00 PM",breakEnd:"5:00 PM"});
+      value.split(",").forEach(part => {
+        const [day,...rest] = part.split(":");
+        const val = rest.join(":");
+        if (ALL_DAYS.includes(day)) {
+          if (val==="closed") parsed[day]={...parsed[day],closed:true};
+          else {
+            const p=val.split("|");
+            const main=p[0].split("-");
+            if(main.length===2) parsed[day]={...parsed[day],open:main[0],close:main[1],closed:false};
+            if(p[1]) { const br=p[1].split("-"); parsed[day]={...parsed[day],hasBreak:true,breakStart:br[0],breakEnd:br[1]||"5:00 PM"}; }
+          }
+        }
+      });
+      setAdvDays(parsed);
+    } else {
+      const parts = value.split(/[–—]/);
+      if (parts.length===2) { setOpen(parts[0].trim()); setClose(parts[1].trim()); }
+    }
+  }, []);
+
+  const emit = (o, c, off, adv, m, h24, hb, bs, be) => {
+    if (h24) { onChange("Open 24 Hours"); return; }
+    if (m==="advanced") {
+      onChange(ALL_DAYS.map(d => {
+        const v = adv[d];
+        if (v.closed) return `${d}:closed`;
+        const breakStr = v.hasBreak ? `|${v.breakStart}-${v.breakEnd}` : "";
+        return `${d}:${v.open}-${v.close}${breakStr}`;
+      }).join(","));
+    } else {
+      const breakStr = hb ? ` | Break: ${bs} – ${be}` : "";
+      const offStr = off.length ? ` (Closed: ${off.join(", ")})` : "";
+      onChange(`${o} – ${c}${breakStr}${offStr}`);
+    }
+  };
+
+  const toggleOff = (day) => {
+    const next = offDays.includes(day) ? offDays.filter(d=>d!==day) : [...offDays, day];
+    setOffDays(next); emit(open,close,next,advDays,mode,is24,hasBreak,breakStart,breakEnd);
+  };
+  const updAdv = (day, field, val) => {
+    const next = {...advDays, [day]:{...advDays[day],[field]:val}};
+    setAdvDays(next); emit(open,close,offDays,next,"advanced",is24,hasBreak,breakStart,breakEnd);
+  };
+
+  const selStyle = {flex:1,padding:"5px 7px",fontSize:12,minWidth:90};
+
+  return (
+    <div style={{background:"#F7F4F0",borderRadius:12,padding:"14px"}}>
+      <label style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,cursor:"pointer"}}>
+        <input type="checkbox" checked={is24} style={{accentColor:"#1A1816"}}
+          onChange={e=>{setIs24(e.target.checked);emit(open,close,offDays,advDays,mode,e.target.checked,hasBreak,breakStart,breakEnd);}}/>
+        <span style={{fontSize:13,fontWeight:600}}>Open 24 Hours</span>
+      </label>
+
+      {!is24 && (
+        <>
+          <div style={{display:"flex",gap:6,marginBottom:14}}>
+            {["simple","advanced"].map(m=>(
+              <button key={m} type="button" onClick={()=>{setMode(m);emit(open,close,offDays,advDays,m,is24,hasBreak,breakStart,breakEnd);}}
+                style={{flex:1,padding:"7px 4px",border:"1.5px solid",borderColor:mode===m?"#1A1816":"#DDD9D3",borderRadius:8,background:mode===m?"#1A1816":"#fff",color:mode===m?"#fff":"#6B6560",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:600,cursor:"pointer"}}>
+                {m==="simple"?"Same every day":"Per day"}
+              </button>
+            ))}
+          </div>
+
+          {mode==="simple" && (
+            <>
+              <div style={{fontSize:11,fontWeight:600,color:"#6B6560",marginBottom:6,letterSpacing:".04em",textTransform:"uppercase"}}>Operating Hours</div>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                <select className="inp" style={selStyle} value={open} onChange={e=>{setOpen(e.target.value);emit(e.target.value,close,offDays,advDays,mode,is24,hasBreak,breakStart,breakEnd);}}>
+                  {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                </select>
+                <span style={{color:"#9E9590",fontSize:13}}>to</span>
+                <select className="inp" style={selStyle} value={close} onChange={e=>{setClose(e.target.value);emit(open,e.target.value,offDays,advDays,mode,is24,hasBreak,breakStart,breakEnd);}}>
+                  {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                </select>
+              </div>
+              <label style={{display:"flex",alignItems:"center",gap:6,fontSize:12,color:"#6B6560",cursor:"pointer",marginBottom:hasBreak?8:12}}>
+                <input type="checkbox" checked={hasBreak} style={{accentColor:"#B8644A"}}
+                  onChange={e=>{setHasBreak(e.target.checked);emit(open,close,offDays,advDays,mode,is24,e.target.checked,breakStart,breakEnd);}}/>
+                Has break / rest period (e.g. 3–5pm)
+              </label>
+              {hasBreak && (
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12,paddingLeft:20}}>
+                  <span style={{fontSize:12,color:"#9E9590",whiteSpace:"nowrap"}}>Break:</span>
+                  <select className="inp" style={selStyle} value={breakStart} onChange={e=>{setBreakStart(e.target.value);emit(open,close,offDays,advDays,mode,is24,hasBreak,e.target.value,breakEnd);}}>
+                    {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                  </select>
+                  <span style={{fontSize:12,color:"#9E9590"}}>–</span>
+                  <select className="inp" style={selStyle} value={breakEnd} onChange={e=>{setBreakEnd(e.target.value);emit(open,close,offDays,advDays,mode,is24,hasBreak,breakStart,e.target.value);}}>
+                    {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                  </select>
+                </div>
+              )}
+              <div style={{fontSize:11,fontWeight:600,color:"#6B6560",marginBottom:6,letterSpacing:".04em",textTransform:"uppercase"}}>Off Days</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                {ALL_DAYS.map(d=>(
+                  <button key={d} type="button"
+                    style={{padding:"5px 11px",borderRadius:20,fontSize:12,fontWeight:500,cursor:"pointer",border:"1.5px solid",borderColor:offDays.includes(d)?"#B83A20":"#DDD9D3",background:offDays.includes(d)?"#FEF0EE":"#fff",color:offDays.includes(d)?"#B83A20":"#6B6560"}}
+                    onClick={()=>toggleOff(d)}>{d}</button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {mode==="advanced" && (
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {ALL_DAYS.map(day=>(
+                <div key={day} style={{background:"#fff",borderRadius:8,padding:"10px 12px"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:advDays[day].closed?0:6}}>
+                    <div style={{width:32,fontSize:12,fontWeight:700,color:"#1A1816"}}>{day}</div>
+                    <label style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#9E9590",cursor:"pointer"}}>
+                      <input type="checkbox" checked={!!advDays[day].closed} style={{accentColor:"#B8644A"}} onChange={e=>updAdv(day,"closed",e.target.checked)}/>
+                      Closed
+                    </label>
+                  </div>
+                  {!advDays[day].closed && (
+                    <>
+                      <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:6}}>
+                        <select className="inp" style={selStyle} value={advDays[day].open} onChange={e=>updAdv(day,"open",e.target.value)}>
+                          {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                        </select>
+                        <span style={{fontSize:11,color:"#9E9590"}}>–</span>
+                        <select className="inp" style={selStyle} value={advDays[day].close} onChange={e=>updAdv(day,"close",e.target.value)}>
+                          {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                        </select>
+                      </div>
+                      <label style={{display:"flex",alignItems:"center",gap:5,fontSize:11,color:"#9E9590",cursor:"pointer",marginBottom:advDays[day].hasBreak?6:0}}>
+                        <input type="checkbox" checked={!!advDays[day].hasBreak} style={{accentColor:"#B8644A"}} onChange={e=>updAdv(day,"hasBreak",e.target.checked)}/>
+                        Break time
+                      </label>
+                      {advDays[day].hasBreak && (
+                        <div style={{display:"flex",alignItems:"center",gap:6,paddingLeft:16}}>
+                          <select className="inp" style={selStyle} value={advDays[day].breakStart||"3:00 PM"} onChange={e=>updAdv(day,"breakStart",e.target.value)}>
+                            {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                          </select>
+                          <span style={{fontSize:11,color:"#9E9590"}}>–</span>
+                          <select className="inp" style={selStyle} value={advDays[day].breakEnd||"5:00 PM"} onChange={e=>updAdv(day,"breakEnd",e.target.value)}>
+                            {HOUR_OPTS.map(t=><option key={t}>{t}</option>)}
+                          </select>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+// ═══ CUISINE TAG INPUT ═══
+const CuisineTagInput = ({ value, onChange }) => {
+  const [q, setQ] = useState("");
+  const suggestions = CUISINES_LIST.filter(c =>
+    c.toLowerCase().includes(q.toLowerCase()) && !value.includes(c) && q.length > 0
+  ).slice(0, 6);
+
+  const add = (tag) => {
+    const t = tag.trim();
+    if (!t || value.includes(t)) return;
+    onChange([...value, t]);
+    setQ("");
+  };
+  const remove = (tag) => onChange(value.filter(c => c !== tag));
+
+  return (
+    <div>
+      <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:8}}>
+        {value.map(c=>(
+          <span key={c} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"5px 10px 5px 12px",background:"#1A1816",color:"#fff",borderRadius:20,fontSize:12,fontWeight:500}}>
+            {c}
+            <button type="button" onClick={()=>remove(c)} style={{background:"none",border:"none",color:"rgba(255,255,255,.7)",cursor:"pointer",fontSize:14,lineHeight:1,padding:0}}>×</button>
+          </span>
+        ))}
+      </div>
+      <div className="sbar" style={{padding:"9px 12px"}}>
+        <Ic.Search/>
+        <input
+          placeholder="e.g. Malay, Cafe, Korean..."
+          value={q}
+          onChange={e=>setQ(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter"||e.key===","){ e.preventDefault(); add(q); } }}
+        />
+      </div>
+      {suggestions.length > 0 && (
+        <div style={{background:"#fff",border:"1.5px solid #DDD9D3",borderRadius:10,marginTop:4,overflow:"hidden"}}>
+          {suggestions.map(c=>(
+            <div key={c} onClick={()=>add(c)}
+              style={{padding:"10px 14px",fontSize:13,cursor:"pointer",borderBottom:"1px solid #F5F2EE"}}
+              onMouseEnter={e=>e.target.style.background="#F5F2EE"}
+              onMouseLeave={e=>e.target.style.background="#fff"}>
+              {c}
+            </div>
+          ))}
+        </div>
+      )}
+      {q.trim() && !CUISINES_LIST.map(c=>c.toLowerCase()).includes(q.trim().toLowerCase()) && (
+        <button type="button" className="btn btn-ghost btn-sm" style={{marginTop:6,fontSize:12}} onClick={()=>add(q)}>
+          + Add "{q.trim()}"
+        </button>
+      )}
+      <div style={{fontSize:11,color:"#9E9590",marginTop:6}}>Type to search or create your own. Press Enter to add.</div>
+    </div>
+  );
+};
+
 const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   const def = {name:"",description:"",address:"",phone:"",cuisines:[],hours:"",photos:[],menu:[],posts:[],reviewsList:[],lat:null,lng:null};
   const [form, setForm] = useState(existing||def);
@@ -1489,11 +1870,11 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
   const [tab, setTab] = useState("info");
   const [photoUrl, setPhotoUrl] = useState("");
   const [showPF, setShowPF] = useState(false);
-  const [postForm, setPostForm] = useState({type:"Update",title:"",body:"",photo:""});
+  const [postForm, setPostForm] = useState({type:"Update",title:"",body:"",photo:"",promoStart:"",promoEnd:""});
   const [showIF, setShowIF] = useState(null);
   const [catName, setCatName] = useState("");
   const [showCF, setShowCF] = useState(false);
-  const [itemForm, setItemForm] = useState({name:"",price:"",soldOut:false,food_tags:[]});
+  const [itemForm, setItemForm] = useState({name:"",price:"",description:"",soldOut:false,food_tags:[]});
   const geocodeTimer = useRef(null);
 
   const upd = (k,v) => setForm(f=>({...f,[k]:v}));
@@ -1556,9 +1937,12 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
         <div className="inp-group"><label className="inp-label">WhatsApp Number</label><input className="inp" placeholder="60123456789" value={form.phone} onChange={e=>upd("phone",e.target.value)}/></div>
         <div className="inp-group">
           <label className="inp-label">Business Hours</label>
-          <WeeklyHoursPicker value={form.hours} onChange={v=>upd("hours",v)}/>
+          <SimpleHoursPicker value={form.hours} onChange={v=>upd("hours",v)}/>
         </div>
-        <div className="inp-group"><label className="inp-label">Cuisine Types</label><div className="cuisine-grid">{CUISINES_LIST.map(c=><div key={c} className={`ctag${form.cuisines.includes(c)?" on":""}`} onClick={()=>toggleC(c)}>{c}</div>)}</div></div>
+        <div className="inp-group">
+          <label className="inp-label">What kind of place is this?</label>
+          <CuisineTagInput value={form.cuisines} onChange={v=>upd("cuisines",v)}/>
+        </div>
       </div>}
       {tab==="photos" && <div>
         <div className="inp-group">
@@ -1583,6 +1967,7 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
               <div className="menu-mgmt-item" key={item.id}>
                 <div style={{flex:1,minWidth:0}}>
                   <div style={{fontSize:14,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.name}</div>
+                  {item.description && <div style={{fontSize:12,color:"#9E9590",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.description}</div>}
                   <div style={{fontSize:13,color:"#6B6560",marginTop:2}}>RM {parseFloat(item.price||0).toFixed(2)}{item.soldOut&&<span className="sold" style={{marginLeft:6}}>Sold Out</span>}</div>
                 </div>
                 <div style={{display:"flex",gap:5}}>
@@ -1593,6 +1978,7 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
             ))}
             {showIF===cat.id && <div style={{background:"#F7F4F0",borderRadius:10,padding:14,marginTop:6}}>
               <div className="inp-group"><label className="inp-label">Dish Name</label><input className="inp" placeholder="e.g. Nasi Lemak Ayam" value={itemForm.name} onChange={e=>setItemForm({...itemForm,name:e.target.value})}/></div>
+              <div className="inp-group"><label className="inp-label">Description <span style={{fontWeight:400,color:"#9E9590"}}>(optional)</span></label><input className="inp" placeholder="e.g. Served with sambal, egg & anchovies" value={itemForm.description||""} onChange={e=>setItemForm({...itemForm,description:e.target.value})}/></div>
               <div className="inp-group"><label className="inp-label">Price (RM)</label><div className="price-row"><span className="rm">RM</span><input className="inp" type="number" placeholder="0.00" min="0" step="0.50" value={itemForm.price} onChange={e=>setItemForm({...itemForm,price:e.target.value})}/></div></div>
               <div className="inp-group"><label className="inp-label">Dish Photo (optional)</label><PhotoUploader value={itemForm.photo||null} onChange={v=>setItemForm({...itemForm,photo:v})} label="Take or choose photo"/></div>
               <div style={{display:"flex",gap:8}}><button className="btn btn-dark btn-sm" onClick={()=>addItem(cat.id)}>Add Dish</button><button className="btn btn-ghost btn-sm" onClick={()=>setShowIF(null)}>Cancel</button></div>
@@ -1614,6 +2000,7 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
               <span className={`pbadge ${{Event:"badge-ev",Promotion:"badge-pr",Update:"badge-up"}[p.type]||"badge-up"}`}>{p.type}</span>
               <div className="pcard-title">{p.title}</div>
               <div style={{fontSize:13,color:"#5A5550"}}>{p.body}</div>
+              {(p.promoStart||p.promoEnd) && <div style={{fontSize:11,color:"#9E9590",marginTop:4}}>📅 {p.promoStart||"?"} → {p.promoEnd||"?"}</div>}
             </div>
             <button onClick={()=>setPosts(posts.filter(x=>x.id!==p.id))} style={{position:"absolute",top:12,right:12,background:"none",border:"none",cursor:"pointer",color:"#B83A20"}}><Ic.Trash/></button>
           </div>
@@ -1625,9 +2012,19 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
             </div>
             <div className="inp-group"><label className="inp-label">Title</label><input className="inp" placeholder="Post title" value={postForm.title} onChange={e=>setPostForm({...postForm,title:e.target.value})}/></div>
             <div className="inp-group"><label className="inp-label">Details</label><textarea className="inp" placeholder="What would you like to share?" value={postForm.body} onChange={e=>setPostForm({...postForm,body:e.target.value})}/></div>
+            {(postForm.type==="Event"||postForm.type==="Promotion") && (
+              <div className="inp-group">
+                <label className="inp-label">{postForm.type==="Promotion"?"Promo Period":"Event Period"} <span style={{fontWeight:400,color:"#9E9590"}}>(optional)</span></label>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <input className="inp" type="date" style={{flex:1}} value={postForm.promoStart} onChange={e=>setPostForm({...postForm,promoStart:e.target.value})}/>
+                  <span style={{color:"#9E9590",fontSize:13,whiteSpace:"nowrap"}}>to</span>
+                  <input className="inp" type="date" style={{flex:1}} value={postForm.promoEnd} onChange={e=>setPostForm({...postForm,promoEnd:e.target.value})}/>
+                </div>
+              </div>
+            )}
             <div className="inp-group"><label className="inp-label">Photo URL (optional)</label><input className="inp" placeholder="https://..." value={postForm.photo} onChange={e=>setPostForm({...postForm,photo:e.target.value})}/></div>
             {postForm.photo && <div className="photo-preview" style={{marginBottom:12}}><img src={postForm.photo} alt=""/></div>}
-            <div style={{display:"flex",gap:8}}><button className="btn btn-dark btn-sm" onClick={()=>{if(!postForm.title.trim())return;setPosts([...posts,{id:uid(),...postForm}]);setPostForm({type:"Update",title:"",body:"",photo:""});setShowPF(false);}}>Add Post</button><button className="btn btn-ghost btn-sm" onClick={()=>setShowPF(false)}>Cancel</button></div>
+            <div style={{display:"flex",gap:8}}><button className="btn btn-dark btn-sm" onClick={()=>{if(!postForm.title.trim())return;setPosts([...posts,{id:uid(),...postForm,comments:[]}]);setPostForm({type:"Update",title:"",body:"",photo:"",promoStart:"",promoEnd:""});setShowPF(false);}}>Add Post</button><button className="btn btn-ghost btn-sm" onClick={()=>setShowPF(false)}>Cancel</button></div>
           </div>
         ) : <button className="btn btn-outline btn-full" onClick={()=>setShowPF(true)}><Ic.Plus/> Add Post</button>}
       </div>}
