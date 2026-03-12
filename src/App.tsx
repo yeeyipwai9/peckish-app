@@ -697,18 +697,53 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
   const [rvHover, setRvHover] = useState(0);
   const [rvText, setRvText] = useState("");
   const [rvPhoto, setRvPhoto] = useState(null);
-  const avg = avgRating(r.reviewsList);
+  const [reviews, setReviews] = useState(r.reviewsList||[]);
+  const avg = avgRating(reviews);
   const status = computeStatus(r.hours);
   const badgeClass = {Event:"badge-ev",Promotion:"badge-pr",Update:"badge-up"};
 
+  // Load reviews from Supabase on open
+  useEffect(() => {
+    const loadReviews = async () => {
+      if (!sb || r.id.startsWith("s")) return;
+      const { data } = await sb.from("reviews")
+        .select("*, profiles(nickname)")
+        .eq("restaurant_id", r.id)
+        .eq("hidden", false)
+        .order("created_at", { ascending: false });
+      if (data && data.length > 0) {
+        const mapped = data.map(rv => ({
+          id: rv.id,
+          author: rv.profiles?.nickname || "Anonymous",
+          rating: rv.rating,
+          text: rv.body,
+          date: rv.created_at,
+          photo: rv.photo || null
+        }));
+        setReviews(mapped);
+        onUpdateRestaurant({...r, reviewsList: mapped});
+      }
+    };
+    loadReviews();
+  }, [r.id]);
+
   const submitReview = async () => {
     if (!rvRating || !rvText.trim()) return alert("Please select a rating and write your review.");
-    const nr = { id: uid(), author: user?.nickname||"Anonymous", rating: rvRating, text: rvText.trim(), date: "Just now" };
+    const nr = { id: uid(), author: user?.nickname||"Anonymous", rating: rvRating, text: rvText.trim(), date: new Date().toISOString(), photo: rvPhoto||null };
     if (sb && !r.id.startsWith("s")) {
-      await sb.from("reviews").insert({ restaurant_id: r.id, user_id: user.sbId, rating: rvRating, body: rvText.trim() });
+      const { error } = await sb.from("reviews").insert({
+        restaurant_id: r.id,
+        user_id: user.sbId,
+        rating: rvRating,
+        body: rvText.trim(),
+        photo: rvPhoto||null
+      });
+      if (error) { alert("Failed to save review. Please try again."); return; }
     }
-    onUpdateRestaurant({...r, reviewsList: [nr, ...(r.reviewsList||[])]});
-    setRvRating(0); setRvText(""); setShowRvForm(false);
+    const updated = [nr, ...reviews];
+    setReviews(updated);
+    onUpdateRestaurant({...r, reviewsList: updated});
+    setRvRating(0); setRvText(""); setRvPhoto(null); setShowRvForm(false);
   };
   const openGMaps = () => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name+", "+r.address)}`, "_blank");
   const openWaze = () => window.open(`https://waze.com/ul?q=${encodeURIComponent(r.name+", "+r.address)}&navigate=yes`, "_blank");
@@ -800,41 +835,54 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
       {/* MENU */}
       {activeTab==="menu" && (
         <div className="tab-content">
-          {r.menu?.length>0 ? r.menu.map(cat=>(
-            <div key={cat.id||cat.category} style={{background:"#fff",borderRadius:16,boxShadow:"0 3px 16px rgba(0,0,0,.08)",overflow:"hidden",marginBottom:20}}>
-              <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:600,padding:"13px 16px",background:"#FAFAF8",borderBottom:"1px solid #EEE9E4",letterSpacing:".01em"}}>{cat.category}</div>
-              {cat.items.map((item,idx)=>(
-                <div key={item.id||item.name} style={{display:"flex",alignItems:"stretch",borderBottom:idx<cat.items.length-1?"1px solid #F5F2EE":"none"}}>
-                  {item.photo
-                    ? <img src={item.photo} alt={item.name} style={{width:84,height:84,objectFit:"cover",flexShrink:0}}/>
-                    : <div style={{width:84,height:84,background:"#F5F2EE",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,color:"#C8C4BE",fontSize:24}}>—</div>}
-                  <div style={{flex:1,padding:"13px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
-                    <div>
-                      <div style={{fontSize:14,fontWeight:600,color:"#1A1816",lineHeight:1.35}}>{item.name}</div>
-                      {item.soldOut && <span className="sold" style={{marginTop:3,display:"inline-block"}}>Sold Out</span>}
-                    </div>
-                    <div style={{fontSize:14,fontWeight:700,color:"#1A1816",whiteSpace:"nowrap"}}>RM {parseFloat(item.price||0).toFixed(2)}</div>
+          {(() => {
+            const restStatus = computeStatus(r.hours);
+            const isRestOpen = restStatus !== "closed";
+            // Filter: only items with photos; sort open restaurant first
+            const catsWithPhotos = (r.menu||[]).map(cat => ({
+              ...cat,
+              items: (cat.items||[]).filter(item => item.photo)
+            })).filter(cat => cat.items.length > 0);
+            if (catsWithPhotos.length === 0) return <div className="no-res">No menu photos yet.</div>;
+            return (
+              <>
+                {!isRestOpen && <div style={{background:"#F5F2EE",borderRadius:10,padding:"10px 14px",marginBottom:14,fontSize:13,color:"#9E9590",textAlign:"center"}}>This restaurant is currently closed</div>}
+                {catsWithPhotos.map(cat=>(
+                  <div key={cat.id||cat.category} style={{background:"#fff",borderRadius:16,boxShadow:"0 3px 16px rgba(0,0,0,.08)",overflow:"hidden",marginBottom:20,opacity:isRestOpen?1:0.75}}>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:600,padding:"13px 16px",background:"#FAFAF8",borderBottom:"1px solid #EEE9E4",letterSpacing:".01em"}}>{cat.category}</div>
+                    {cat.items.map((item,idx)=>(
+                      <div key={item.id||item.name} style={{display:"flex",alignItems:"stretch",borderBottom:idx<cat.items.length-1?"1px solid #F5F2EE":"none"}}>
+                        <img src={item.photo} alt={item.name} style={{width:84,height:84,objectFit:"cover",flexShrink:0}}/>
+                        <div style={{flex:1,padding:"13px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+                          <div>
+                            <div style={{fontSize:14,fontWeight:600,color:"#1A1816",lineHeight:1.35}}>{item.name}</div>
+                            {item.soldOut && <span className="sold" style={{marginTop:3,display:"inline-block"}}>Sold Out</span>}
+                          </div>
+                          <div style={{fontSize:14,fontWeight:700,color:"#1A1816",whiteSpace:"nowrap"}}>RM {parseFloat(item.price||0).toFixed(2)}</div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )) : <div className="no-res">No menu items added yet.</div>}
+                ))}
+              </>
+            );
+          })()}
         </div>
       )}
 
       {/* REVIEWS */}
       {activeTab==="reviews" && (
         <div className="tab-content">
-          {r.reviewsList?.length>0 && (
+          {reviews?.length>0 && (
             <div className="rating-hero-box">
               <div>
                 <div className="rating-num-big">{avg.toFixed(1)}</div>
                 <Stars rating={avg} size={18}/>
-                <div style={{fontSize:12,color:"#9E9590",marginTop:5}}>{r.reviewsList.length} reviews</div>
+                <div style={{fontSize:12,color:"#9E9590",marginTop:5}}>{reviews.length} reviews</div>
               </div>
               <div style={{flex:1}}>
                 {[5,4,3,2,1].map(s=>{
-                  const cnt = r.reviewsList.filter(rv=>rv.rating===s).length;
+                  const cnt = reviews.filter(rv=>rv.rating===s).length;
                   const pct = r.reviewsList.length ? Math.round(cnt/r.reviewsList.length*100) : 0;
                   return (
                     <div className="bar-row" key={s}>
@@ -873,7 +921,7 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
               </div>
             </div>
           )}
-          {r.reviewsList?.length>0 ? r.reviewsList.map((rv,i)=>(
+          {reviews?.length>0 ? reviews.map((rv,i)=>(
             <div className="ritem" key={rv.id||i}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
                 <span style={{fontSize:13,fontWeight:600}}>{rv.author}</span>
@@ -1344,13 +1392,132 @@ const ProfileScreen = ({ user, restaurants, onAddRestaurant, onEditRestaurant, o
 
       <div style={{marginBottom:24}}>
         <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,marginBottom:10}}>Settings</div>
-        {["Edit Profile","Notifications","Help & Support","Privacy Policy"].map(item=>(
+        {["Edit Profile","Notifications","Privacy Policy"].map(item=>(
           <div className="prof-row" key={item}><span style={{fontSize:14,fontWeight:500}}>{item}</span><Ic.Chevron/></div>
         ))}
+        <div className="prof-row" onClick={()=>window.open("https://wa.me/60175164796","_blank")} style={{cursor:"pointer"}}>
+          <span style={{fontSize:14,fontWeight:500}}>Help & Support</span>
+          <span style={{fontSize:11,color:"#25D366",fontWeight:600,display:"flex",alignItems:"center",gap:4}}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.18 1.6 5.99L0 24l6.19-1.578A11.948 11.948 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.374l-.36-.214-3.722.949.98-3.614-.235-.372A9.818 9.818 0 1112 21.818z"/></svg>
+            WhatsApp Us
+          </span>
+        </div>
       </div>
       <button className="btn btn-ghost btn-full" onClick={onLogout} style={{color:"#B83A20"}}>Sign Out</button>
     </div>
   );
+};
+
+
+// ═══ WEEKLY HOURS PICKER ═══
+const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+const parseWeeklyHours = (str) => {
+  // Parse "Mon:9:00 AM-10:00 PM,Tue:closed,..." or legacy "9:00 AM – 10:00 PM"
+  const def = { open:"9:00 AM", close:"10:00 PM", closed:false };
+  const result = {};
+  DAYS.forEach(d => result[d] = {...def});
+  if (!str) return result;
+  if (str.includes(":") && str.includes(",")) {
+    str.split(",").forEach(part => {
+      const [day, ...rest] = part.split(":");
+      const val = rest.join(":");
+      if (DAYS.includes(day)) {
+        if (val === "closed") result[day] = {...def, closed:true};
+        else if (val === "24hours") result[day] = {...def, open:"12:00 AM", close:"11:59 PM", allDay:true};
+        else {
+          const parts = val.split("-");
+          if (parts.length===2) result[day] = { open:parts[0], close:parts[1], closed:false };
+        }
+      }
+    });
+  } else {
+    // Legacy single hours - apply to all days
+    DAYS.forEach(d => {
+      if (str.toLowerCase().includes("24")) result[d] = {...def, open:"12:00 AM", close:"11:59 PM", allDay:true};
+      else {
+        const parts = str.split(/[–—]/);
+        if (parts.length===2) result[d] = { open:parts[0].trim(), close:parts[1].trim(), closed:false };
+      }
+    });
+  }
+  return result;
+};
+
+const serializeWeeklyHours = (days) => {
+  return DAYS.map(d => {
+    const v = days[d];
+    if (v.closed) return `${d}:closed`;
+    if (v.allDay) return `${d}:24hours`;
+    return `${d}:${v.open}-${v.close}`;
+  }).join(",");
+};
+
+const TIME_OPTS = [];
+for (let h=0;h<24;h++) {
+  for (let m=0;m<60;m+=30) {
+    const ampm = h<12?"AM":"PM";
+    const h12 = h===0?12:h>12?h-12:h;
+    TIME_OPTS.push(`${h12}:${m===0?"00":"30"} ${ampm}`);
+  }
+}
+
+const WeeklyHoursPicker = ({ value, onChange }) => {
+  const [days, setDays] = useState(() => parseWeeklyHours(value));
+  const update = (day, field, val) => {
+    const next = { ...days, [day]: { ...days[day], [field]: val } };
+    setDays(next);
+    onChange(serializeWeeklyHours(next));
+  };
+  return (
+    <div style={{background:"#F7F4F0",borderRadius:12,padding:"12px 14px",display:"flex",flexDirection:"column",gap:10}}>
+      {DAYS.map(day => (
+        <div key={day} style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+          <div style={{width:32,fontSize:12,fontWeight:700,color:"#1A1816"}}>{day}</div>
+          <label style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#9E9590",cursor:"pointer"}}>
+            <input type="checkbox" checked={!!days[day].closed} onChange={e=>update(day,"closed",e.target.checked)} style={{accentColor:"#B8644A"}}/>
+            Closed
+          </label>
+          {!days[day].closed && (
+            <>
+              <select className="inp" style={{flex:1,padding:"6px 8px",fontSize:12,minWidth:100}} value={days[day].open} onChange={e=>update(day,"open",e.target.value)}>
+                {TIME_OPTS.map(t=><option key={t} value={t}>{t}</option>)}
+              </select>
+              <span style={{fontSize:11,color:"#9E9590"}}>to</span>
+              <select className="inp" style={{flex:1,padding:"6px 8px",fontSize:12,minWidth:100}} value={days[day].close} onChange={e=>update(day,"close",e.target.value)}>
+                {TIME_OPTS.map(t=><option key={t} value={t}>{t}</option>)}
+              </select>
+              <label style={{display:"flex",alignItems:"center",gap:4,fontSize:12,color:"#9E9590",cursor:"pointer"}}>
+                <input type="checkbox" checked={!!days[day].allDay} onChange={e=>update(day,"allDay",e.target.checked)} style={{accentColor:"#1A1816"}}/>
+                24hr
+              </label>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── COMPUTE STATUS FROM WEEKLY HOURS ─────────────────────────
+const computeStatusWeekly = (hoursStr) => {
+  if (!hoursStr) return "closed";
+  // Legacy format fallback
+  if (!hoursStr.includes("Mon:") && !hoursStr.includes("Tue:")) return computeStatus(hoursStr);
+  const days = parseWeeklyHours(hoursStr);
+  const now = new Date();
+  const dayName = DAYS[now.getDay()===0?6:now.getDay()-1];
+  const today = days[dayName];
+  if (!today || today.closed) return "closed";
+  if (today.allDay || (today.open==="12:00 AM" && today.close==="11:59 PM")) return "open";
+  const openM = parseTimeMins(today.open);
+  const closeM = parseTimeMins(today.close);
+  if (openM===null||closeM===null) return "closed";
+  const nowM = now.getHours()*60+now.getMinutes();
+  const isOpen = closeM<openM?(nowM>=openM||nowM<closeM):(nowM>=openM&&nowM<closeM);
+  if (isOpen) return "open";
+  const minsUntilOpen = openM>nowM?openM-nowM:(1440-nowM+openM);
+  if (minsUntilOpen<=30) return "opening_soon";
+  return "closed";
 };
 
 // ═══ RESTAURANT FORM ═══
@@ -1401,7 +1568,10 @@ const RestaurantForm = ({ existing, onSave, onCancel, user }) => {
         <div className="inp-group"><label className="inp-label">Description</label><textarea className="inp" placeholder="What makes your place special?" value={form.description} onChange={e=>upd("description",e.target.value)}/></div>
         <div className="inp-group"><label className="inp-label">Address</label><input className="inp" placeholder="e.g. 12, Jalan Ampang, KL" value={form.address} onChange={e=>upd("address",e.target.value)}/></div>
         <div className="inp-group"><label className="inp-label">WhatsApp Number</label><input className="inp" placeholder="60123456789" value={form.phone} onChange={e=>upd("phone",e.target.value)}/></div>
-        <div className="inp-group"><label className="inp-label">Business Hours</label><input className="inp" placeholder="e.g. 9:00 AM – 10:00 PM" value={form.hours} onChange={e=>upd("hours",e.target.value)}/></div>
+        <div className="inp-group">
+          <label className="inp-label">Business Hours</label>
+          <WeeklyHoursPicker value={form.hours} onChange={v=>upd("hours",v)}/>
+        </div>
         <div className="inp-group"><label className="inp-label">Cuisine Types</label><div className="cuisine-grid">{CUISINES_LIST.map(c=><div key={c} className={`ctag${form.cuisines.includes(c)?" on":""}`} onClick={()=>toggleC(c)}>{c}</div>)}</div></div>
       </div>}
 
