@@ -1,13 +1,19 @@
 // @ts-nocheck
 // ═══════════════════════════════════════════════════════════
-// PECKISH v9 — Full app with Supabase backend
+// PECKISH v9 — Full app with Supabase backend + Google Places API
 // ═══════════════════════════════════════════════════════════
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPABASE_URL = "https://dkusjegqmyahztgzlwkf.supabase.co/";
 const SUPABASE_ANON_KEY = "sb_publishable_EPOzLF9sY-IvpBcLaWmFBg_0RvVsiZb";
+
+// 🔑 GOOGLE PLACES API CONFIGURATION
+// Replace with your actual API key from Google Cloud Console
+// Enable these APIs: Places API, Maps JavaScript API, Geocoding API
+const GOOGLE_MAPS_API_KEY = "AIzaSyA6OA79Bc-OP8KfaNV_zIIk6_Wi2jj3PVA";
+const USE_GOOGLE_PLACES = GOOGLE_MAPS_API_KEY !== "YOUR_GOOGLE_MAPS_API_KEY_HERE";
 
 const CONFIGURED = !SUPABASE_URL.startsWith("YOUR");
 const ADMIN_EMAIL = "yeeyipwai9@gmail.com";
@@ -673,6 +679,99 @@ const Detail = ({ r, onBack, user, onUpdateRestaurant }) => {
 
   const openGMaps = () => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(r.name+", "+r.address)}`, "_blank");
   const openWaze = () => window.open(`https://waze.com/ul?q=${encodeURIComponent(r.name+", "+r.address)}&navigate=yes`, "_blank");
+
+  // 🗺️ Google Places API - Search nearby restaurants
+  const searchGooglePlaces = useCallback(async (query, location) => {
+    if (!USE_GOOGLE_PLACES) return null;
+    
+    try {
+      const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${location.lat},${location.lng}&radius=5000&key=${GOOGLE_MAPS_API_KEY}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.status === "OK" && data.results?.length > 0) {
+        return data.results.map(place => ({
+          id: place.place_id,
+          name: place.name,
+          address: place.formatted_address,
+          rating: place.rating || 0,
+          user_ratings_total: place.user_ratings_total || 0,
+          lat: place.geometry?.location?.lat,
+          lng: place.geometry?.location?.lng,
+          photo_reference: place.photos?.[0]?.photo_reference,
+          types: place.types || [],
+          price_level: place.price_level || 0,
+          opening_hours: place.opening_hours?.open_now !== undefined ? place.opening_hours.open_now : null,
+          formatted_phone_number: place.formatted_phone_number || "",
+          website: place.website || "",
+          reviews: place.reviews || []
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error("Google Places API error:", error);
+      return null;
+    }
+  }, []);
+
+  // 🗺️ Get place details from Google Places API
+  const getPlaceDetails = useCallback(async (placeId) => {
+    if (!USE_GOOGLE_PLACES) return null;
+    
+    try {
+      const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,geometry,rating,reviews,photos,opening_hours,price_level,formatted_phone_number,website,url&key=${GOOGLE_MAPS_API_KEY}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.status === "OK") {
+        return {
+          ...data.result,
+          photoUrl: data.result.photos?.[0] 
+            ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${data.result.photos[0].photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
+            : null
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error("Google Place Details API error:", error);
+      return null;
+    }
+  }, []);
+
+  // 🗺️ Get photo from Google Places API
+  const getPlacePhotoUrl = useCallback((photoReference, maxWidth = 800) => {
+    if (!USE_GOOGLE_PLACES || !photoReference) return null;
+    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${GOOGLE_MAPS_API_KEY}`;
+  }, []);
+
+  // 🗺️ Autocomplete for search input using Google Places API
+  const autocompletePlaces = useCallback(async (input, location) => {
+    if (!USE_GOOGLE_PLACES || input.length < 3) return [];
+    
+    try {
+      let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${GOOGLE_MAPS_API_KEY}`;
+      
+      if (location) {
+        url += `&location=${location.lat},${location.lng}&radius=5000`;
+      }
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.status === "OK" && data.predictions?.length > 0) {
+        return data.predictions.map(pred => ({
+          placeId: pred.place_id,
+          description: pred.description,
+          matched_substrings: pred.matched_substrings,
+          types: pred.types
+        }));
+      }
+      return [];
+    } catch (error) {
+      console.error("Google Places Autocomplete error:", error);
+      return [];
+    }
+  }, []);
 
   return (
     <div className="screen" style={{paddingBottom:28}}>
