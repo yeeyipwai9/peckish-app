@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Peckish | Under maintenance</title>
+<meta name="description" content="Peckish is temporarily down for maintenance. Please check back soon.">
+<style>
+:root{--bg:#0f0e0c;--ink:#f4f1ea;--mute:#a9a39a;--acc:#ffd21f}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{display:grid;place-items:center;padding:24px;background:radial-gradient(70% 55% at 50% 110%,rgba(255,210,31,.35),transparent 70%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;line-height:1.6}
+main{max-width:34rem}
+.mark{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--acc);color:#111;font-weight:800;font-size:28px;margin-bottom:28px}
+h1{font-size:clamp(2rem,6vw,3rem);line-height:1.15;margin-bottom:14px}
+p{color:var(--mute);font-size:1.1rem}
+.bar{margin:32px auto 0;width:160px;height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar i{display:block;width:40%;height:100%;background:var(--acc);border-radius:2px;animation:slide 1.6s ease-in-out infinite alternate}
+@keyframes slide{to{transform:translateX(150%)}}
+@media(prefers-reduced-motion:reduce){.bar i{animation:none}}
+</style>
+</head>
+<body>
+<main>
+  <div class="mark" aria-hidden="true">P</div>
+  <h1>We'll be right back.</h1>
+  <p>Peckish is down for maintenance. Please check back soon.</p>
+  <div class="bar" aria-hidden="true"><i></i></div>
+</main>
+</body>
+</html>
