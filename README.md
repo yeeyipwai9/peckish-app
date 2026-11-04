@@ -1,5 +1,8 @@
 # Peckish
 
-This site is in maintenance mode. The previous version of the app is kept on the branch `backup-before-maintenance-2026-11-05`.
+Static site served by Vercel from `public/`.
 
-To restore it: `git checkout main && git reset --hard backup-before-maintenance-2026-11-05` then push.
+- `/` maintenance page
+- `/sample1` Halo hair salon sample website
+
+The previous Next.js app is kept on the branch `backup-before-maintenance-2026-11-05`.
