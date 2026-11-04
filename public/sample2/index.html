@@ -74,8 +74,16 @@ img{display:block;max-width:100%}
 .cta .btn{width:100%;white-space:nowrap;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
 .cta.swapped .sw__y{transform:translateX(calc(100% + 10px))}
 .cta.swapped .sw__w{transform:translateX(calc(-100% - 10px))}
-.arrow{position:absolute;left:19%;bottom:13%;width:clamp(70px,7vw,104px);height:auto;pointer-events:none}
+.arrow{position:absolute;left:20%;bottom:5%;width:clamp(50px,5vw,76px);height:auto;pointer-events:none}
+.card--lic{left:19%;top:3%;max-width:250px}
+.card--lic strong{display:block;font:800 clamp(18px,1.7vw,24px) var(--head);letter-spacing:-.01em;margin:-2px 0 2px}
+.card--lic span{font-size:12px;color:var(--mute);font-weight:500}
+.card--exp{left:11%;top:35%;display:flex;align-items:center;gap:12px}
+.card--exp b{font:800 clamp(40px,4vw,56px)/1 var(--head);color:var(--gold)}
+.card--exp span{font-weight:700;line-height:1.2;font-size:15px}
 .handle{position:absolute;left:12%;bottom:40%;font:700 clamp(20px,2.2vw,30px) "Caveat",cursive;transform:rotate(-6deg);color:var(--ink)}
+.mq{display:none;position:relative;z-index:3;background:var(--cream);padding:6px 16px 34px}
+.mq .card{position:static;max-width:520px;margin:0 auto}
 .who{display:block;margin-top:8px;font-size:12px;color:var(--mute);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .rise{opacity:0;transform:translateY(24px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
 .rise.d1{animation-delay:.1s}.rise.d2{animation-delay:.2s}.rise.d3{animation-delay:.35s}
@@ -157,7 +165,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .nav ul{display:none}
   .hero{--ph:clamp(340px,calc(100svh - 330px),560px)}
   .spin{display:none}
-  .arrow{left:3%;bottom:14%;width:64px}.handle{left:2%;bottom:34%;font-size:19px}
+  .arrow{display:none}
+  .card--lic{left:0;top:0;max-width:140px;padding:10px 12px}.card--lic strong{font-size:15px}.card--lic span{display:none}.card--lic small{margin-bottom:4px;letter-spacing:.1em}
+  .card--exp{left:auto;right:0;top:0;padding:10px 12px;gap:8px}.card--exp b{font-size:34px}.card--exp span{font-size:12px}
+  .card--r{display:none}
+  .mq{display:block}
   .card--r{right:0;top:12%;max-width:150px;padding:12px 14px}
   .card--r b{font-size:32px}.card--r p{font-size:13px}
   .stage .cta{bottom:16px}
@@ -180,17 +192,21 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   <h1 class="rise d1">I'm Sample <em>Tang</em></h1>
   <p class="sub rise d2">I am a property agent in Kuala Lumpur.</p>
   <div class="stage rise d3">
+    <!-- SAMPLE values: replace with the agent's real REN licence number and real years of experience -->
+    <div class="card card--lic"><small>Licensed agent</small><strong>rentjw0611</strong><span>Registered Estate Agent</span></div>
+    <div class="card card--exp"><b>5</b><span>years of<br>experience</span></div>
     <div class="card card--r"><b>&ldquo;</b><p>Very professional and patient. She did a lot of homework before I came.</p><small class="who">Happy client</small></div>
     <div class="spin" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="ring" d="M60 60 m-46 0 a46 46 0 1 1 92 0 a46 46 0 1 1 -92 0"/></defs><circle cx="60" cy="60" r="58" fill="#fff" stroke="rgba(16,26,46,.14)"/><text><textPath href="#ring">FREE VALUATION &middot; LET'S TALK &middot; </textPath></text></svg><div class="dot"><span><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span></div></div>
     <img src="assets/sample-tang.webp" alt="Sample Tang, property consultant, smiling with arms crossed" width="860" height="1253" fetchpriority="high">
     <img class="arrow" src="assets/arrow.webp" alt="" width="300" height="480">
-    <span class="handle">rentjw0611</span>
     <div class="cta" id="sw" role="group" aria-label="Contact or browse property">
       <a class="btn btn--gold sw__y" href="#book">Contact <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
       <button type="button" class="btn btn--ghost sw__w" id="swW" aria-label="Switch between New project and Preloved"><span id="swT">New project</span></button>
     </div>
   </div>
 </header>
+
+<div class="mq"><div class="card card--r2"><p style="font:700 16px/1.3 var(--head)">&ldquo;Very professional and patient. She did a lot of homework before I came.&rdquo;</p><small class="who">Happy client</small></div></div>
 
 <div class="marq" aria-label="Platforms where your property is listed">
   <div class="marq__track">
