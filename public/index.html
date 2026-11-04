@@ -3,30 +3,99 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow">
-<title>Peckish | Under maintenance</title>
-<meta name="description" content="Peckish is temporarily down for maintenance. Please check back soon.">
+<meta name="robots" content="noindex">
+<title>Peckish | Sample websites</title>
+<meta name="description" content="Sample websites for small businesses: a hair salon, a property agent and a GEO agency. Tap a card to open the full sample.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f0e0c;--ink:#f4f1ea;--mute:#a9a39a;--acc:#ffd21f}
+:root{--ink:#0e0e0e;--cream:#f4efe6;--paper:#fbf8f2;--gold:#e3a83a;--gold-d:#c98f22;--mute:#6b665c;--line:rgba(14,14,14,.14);--head:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;--sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{display:grid;place-items:center;padding:24px;background:radial-gradient(70% 55% at 50% 110%,rgba(255,210,31,.35),transparent 70%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;text-align:center;line-height:1.6}
-main{max-width:34rem}
-.mark{display:inline-grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--acc);color:#111;font-weight:800;font-size:28px;margin-bottom:28px}
-h1{font-size:clamp(2rem,6vw,3rem);line-height:1.15;margin-bottom:14px}
-p{color:var(--mute);font-size:1.1rem}
-.bar{margin:32px auto 0;width:160px;height:4px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
-.bar i{display:block;width:40%;height:100%;background:var(--acc);border-radius:2px;animation:slide 1.6s ease-in-out infinite alternate}
-@keyframes slide{to{transform:translateX(150%)}}
-@media(prefers-reduced-motion:reduce){.bar i{animation:none}}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--ink);color:var(--ink);font-size:17px;line-height:1.6;overflow-x:hidden}
+a{color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* ---------- top: dark, one big headline ---------- */
+.top{position:relative;color:#f6f3ea;padding:26px 0 150px;isolation:isolate;overflow:hidden}
+.top::before{content:"";position:absolute;left:50%;top:-20%;width:min(130vw,1200px);aspect-ratio:1;transform:translateX(-50%);border-radius:50%;z-index:-1;background:radial-gradient(closest-side,rgba(227,168,58,.22),transparent 70%)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;font:800 22px var(--head);letter-spacing:-.02em;text-decoration:none}
+.logo i{width:30px;height:30px;border-radius:50%;background:var(--gold);display:inline-block;box-shadow:0 0 0 5px rgba(227,168,58,.22)}
+.nav small{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#a9a69c;font-weight:700}
+.hero{text-align:center;padding-top:clamp(50px,9vh,100px)}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.eyebrow::before,.eyebrow::after{content:"";width:30px;height:1px;background:var(--gold)}
+h1{font:800 clamp(2.6rem,7.4vw,6rem)/1 var(--head);letter-spacing:-.035em;margin:20px 0 18px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--gold)}
+.lead{max-width:30em;margin:0 auto;color:#c9c5ba;font-size:clamp(1rem,1.6vw,1.2rem)}
+.rise{opacity:0;transform:translateY(20px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+.rise.d1{animation-delay:.12s}.rise.d2{animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ---------- gallery: cream sheet, rounded top, slides up over the dark top ---------- */
+.sheet{position:relative;z-index:2;margin-top:-56px;background:var(--cream);border-radius:46px 46px 0 0;padding:90px 0 100px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.card{position:relative;display:flex;flex-direction:column;text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:28px;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.card:hover{transform:translateY(-6px);box-shadow:0 36px 60px -34px rgba(14,14,14,.55)}
+.shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:#222}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.card:hover .shot img{transform:scale(1.05)}
+.num{position:absolute;left:14px;top:14px;min-width:38px;height:38px;padding:0 12px;border-radius:999px;background:var(--gold);color:var(--ink);display:grid;place-items:center;font:800 14px var(--head);box-shadow:0 8px 20px -8px rgba(0,0,0,.6)}
+.info{padding:22px 24px 26px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tag{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.info h2{font:800 clamp(1.5rem,2.2vw,1.9rem)/1.1 var(--head);letter-spacing:-.02em}
+.info p{color:var(--mute);font-size:15px}
+.open{margin-top:auto;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-weight:700;font-size:15px}
+.open b{display:inline-flex;align-items:center;gap:8px}
+.open i{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;transition:background .3s,transform .3s}
+.open svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.card:hover .open i{background:var(--gold);color:var(--ink);transform:rotate(45deg)}
+.open span{font-size:12px;color:var(--mute);font-weight:500;word-break:break-all}
+.note{margin-top:34px;text-align:center;font-size:14px;color:var(--mute)}
+footer{background:var(--ink);color:#a9a69c;font-size:14px;padding:28px 0}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+@media(max-width:980px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.sheet{padding:70px 0 80px;border-radius:34px 34px 0 0}.nav small{display:none}}
+@media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;animation:none}.card,.shot img,.open i{transition:none}}
 </style>
 </head>
 <body>
-<main>
-  <div class="mark" aria-hidden="true">P</div>
-  <h1>We'll be right back.</h1>
-  <p>Peckish is down for maintenance. Please check back soon.</p>
-  <div class="bar" aria-hidden="true"><i></i></div>
+<header class="top">
+  <div class="wrap">
+    <nav class="nav" aria-label="Main"><a class="logo" href="/"><i></i>Peckish</a><small>Sample websites</small></nav>
+    <div class="hero">
+      <div class="eyebrow rise">Website samples</div>
+      <h1 class="rise d1">Websites that <em>look the part.</em></h1>
+      <p class="lead rise d2">Three sample sites for small businesses. Tap a card to open the full page, then try it on your phone.</p>
+    </div>
+  </div>
+</header>
+
+<main class="sheet">
+  <div class="wrap">
+    <div class="grid">
+      <a class="card" href="/sample1/">
+        <div class="shot"><span class="num">01</span><img src="assets/thumb-1.webp" alt="Halo hair salon website: headline Hair that suits you perfectly over a salon photo" width="1000" height="625" loading="eager"></div>
+        <div class="info"><span class="tag">Hair salon</span><h2>Halo</h2><p>A warm, bright one-page site for a hair studio, with services, a four-step process and WhatsApp booking.</p>
+          <div class="open"><b>Open sample 1</b><span>peckish.my/sample1</span><i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></i></div></div>
+      </a>
+      <a class="card" href="/sample2/">
+        <div class="shot"><span class="num">02</span><img src="assets/thumb-2.webp" alt="Sample Tang property agent portfolio with licence, experience and contact notes around a portrait" width="1000" height="625" loading="lazy"></div>
+        <div class="info"><span class="tag">Property agent</span><h2>Sample Tang</h2><p>A personal-brand portfolio for an agent, with a licence note, years of experience, platforms and a New project / Used switch.</p>
+          <div class="open"><b>Open sample 2</b><span>peckish.my/sample2</span><i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></i></div></div>
+      </a>
+      <a class="card" href="/sample3/">
+        <div class="shot"><span class="num">03</span><img src="assets/thumb-3.webp" alt="Soris Origin hero redesign: Does AI recommend you today, with a rotating video panel" width="1000" height="625" loading="lazy"></div>
+        <div class="info"><span class="tag">GEO agency</span><h2>Soris Origin</h2><p>A black and yellow hero for an AI-visibility agency, with five rotating business clips and a scrolling list of AI tools.</p>
+          <div class="open"><b>Open sample 3</b><span>peckish.my/sample3</span><i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></i></div></div>
+      </a>
+    </div>
+    <p class="note">Samples only. Names, numbers and reviews on these pages are placeholders.</p>
+  </div>
 </main>
+<footer><div class="wrap"><span>&copy; 2026 Peckish</span><span>Sample websites</span></div></footer>
 </body>
 </html>
