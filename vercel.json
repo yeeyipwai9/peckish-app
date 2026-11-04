@@ -3,5 +3,6 @@
   "installCommand": "echo skip",
   "buildCommand": "echo static",
   "outputDirectory": "public",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "trailingSlash": true
 }
