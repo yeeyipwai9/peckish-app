@@ -166,6 +166,23 @@ h2 em{font-style:normal;color:var(--gold)}
 footer{background:var(--ink);color:#aab0c0;font-size:14px;padding:0 0 30px}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(255,255,255,.16);padding-top:24px}
 
+/* desktop: notes sit ON the round orange glow, each one anchored to a point on its circle */
+@media(min-width:861px){
+  .stage{--S:min(120vw,1100px);--R:calc(var(--S)*.33);--cy:calc(10svh + var(--ph) - var(--S)/2)}
+  .stage .note{display:block;width:0;height:0;gap:0;right:auto;left:calc(50% - var(--R)*var(--c));top:calc(var(--cy) + var(--R)*var(--s))}
+  .stage .note--r{left:calc(50% + var(--R)*var(--c))}
+  .stage .note > div,.stage .note > a{position:absolute;top:0;transform:translateY(-50%);white-space:nowrap}
+  .stage .note > div{right:14px;text-align:right;flex:none}
+  .stage .note--r > div,.stage .note--r > a{right:auto;left:14px;text-align:left}
+  .stage .note .loop{position:absolute;top:0;left:0;width:var(--aw);transform:translateY(-50%)}
+  .stage .note--r .loop{left:auto;right:0;transform:translateY(-50%) scaleX(-1)}
+  .note--lic{--c:.978;--s:-.208;--aw:170px}
+  .note--exp{--c:.94;--s:.342;--aw:130px}
+  .note--hc{--c:.643;--s:.766;--aw:70px}
+  .note--q{--c:.978;--s:-.208;--aw:170px}
+  .note--c{--c:.819;--s:.574;--aw:110px}
+  .note--q p{white-space:normal;width:min(15em,calc(50vw - var(--R)*.98 - 34px))}
+}
 /* ---------- phone ---------- */
 @media(max-width:860px){
   .nav ul{display:none}
