@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Peckish | Sample websites</title>
-<meta name="description" content="Sample websites for small businesses: a hair salon, a property agent and a GEO agency. Tap a card to open the full sample.">
+<meta name="description" content="Sample websites for small businesses: a hair salon, a property agent, a GEO agency and a burger shop. Tap a card to open the full sample.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -37,7 +37,7 @@ h1 em{font-style:normal;color:var(--gold)}
 
 /* ---------- gallery: cream sheet, rounded top, slides up over the dark top ---------- */
 .sheet{position:relative;z-index:2;margin-top:-56px;background:var(--cream);border-radius:46px 46px 0 0;padding:90px 0 100px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:28px}
 .card{position:relative;display:flex;flex-direction:column;text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:28px;overflow:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
 .card:hover{transform:translateY(-6px);box-shadow:0 36px 60px -34px rgba(14,14,14,.55)}
 .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:#222}
@@ -57,8 +57,7 @@ h1 em{font-style:normal;color:var(--gold)}
 .note{margin-top:34px;text-align:center;font-size:14px;color:var(--mute)}
 footer{background:var(--ink);color:#a9a69c;font-size:14px;padding:28px 0}
 footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
-@media(max-width:980px){.grid{grid-template-columns:1fr 1fr}}
-@media(max-width:640px){.grid{grid-template-columns:1fr}.sheet{padding:70px 0 80px;border-radius:34px 34px 0 0}.nav small{display:none}}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.sheet{padding:70px 0 80px;border-radius:34px 34px 0 0}.nav small{display:none}}
 @media(prefers-reduced-motion:reduce){.rise{opacity:1;transform:none;animation:none}.card,.shot img,.open i{transition:none}}
 </style>
 </head>
@@ -69,7 +68,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
     <div class="hero">
       <div class="eyebrow rise">Website samples</div>
       <h1 class="rise d1">Websites that <em>look the part.</em></h1>
-      <p class="lead rise d2">Three sample sites for small businesses. Tap a card to open the full page, then try it on your phone.</p>
+      <p class="lead rise d2">Four sample sites for small businesses. Tap a card to open the full page, then try it on your phone.</p>
     </div>
   </div>
 </header>
@@ -91,6 +90,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
         <div class="shot"><span class="num">03</span><img src="assets/thumb-3.webp" alt="Soris Origin hero redesign: Does AI recommend you today, with a rotating video panel" width="1000" height="625" loading="lazy"></div>
         <div class="info"><span class="tag">GEO agency</span><h2>Soris Origin</h2><p>A black and yellow hero for an AI-visibility agency, with five rotating business clips and a scrolling list of AI tools.</p>
           <div class="open"><b>Open sample 3</b><span>peckish.my/sample3</span><i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></i></div></div>
+      </a>
+      <a class="card" href="/sample4/">
+        <div class="shot"><span class="num">04</span><img src="assets/thumb-4.webp" alt="Patty and Co burger shop website: Burgers off the flame, with a flame photo and a burger close-up" width="1000" height="625" loading="lazy"></div>
+        <div class="info"><span class="tag">Burger shop</span><h2>Patty &amp; Co</h2><p>A bold black and lime site for a burger shop, with a flame photo, a burger clip, a menu with videos and WhatsApp ordering.</p>
+          <div class="open"><b>Open sample 4</b><span>peckish.my/sample4</span><i><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></i></div></div>
       </a>
     </div>
     <p class="note">Samples only. Names, numbers and reviews on these pages are placeholders.</p>
