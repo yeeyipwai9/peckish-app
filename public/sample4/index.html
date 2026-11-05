@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Patty & Co","servesCuisine":"Burgers","areaServed":"Johor Bahru"}</script>
 <title>Patty &amp; Co | Flame-grilled burgers (sample)</title>
 <meta name="description" content="Sample burger shop website: flame-grilled burgers, loaded fries and WhatsApp ordering.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,6 +123,17 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .shade{display:block}
 }
 @media(prefers-reduced-motion:reduce){h1 span,.lead,.ctas,.facts{opacity:1;transform:none;animation:none}.hero__bg img{animation:none}.band__in{animation:none}.reveal{opacity:1;transform:none;transition:none}}
+.price{display:block;margin-top:6px;font:700 .62em var(--sans);letter-spacing:.06em;color:var(--lime);white-space:nowrap}
+.steps{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.step{padding:28px 28px 0 0}
+.step i{font:400 40px/1 var(--head);color:var(--lime);font-style:normal}
+.step h3{font:400 22px/1.1 var(--head);margin:14px 0 8px;text-transform:uppercase}
+.step p{color:var(--mute);font-size:15px}
+.rv{margin-top:36px;display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.rv blockquote{padding:26px 24px;border:1.5px solid #0c0c0c;border-radius:20px;font-size:17px;line-height:1.5;background:transparent}
+.rv b{display:block;margin-top:14px;font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.rv small{display:block;color:#6b665a;font-size:12px;margin-top:2px}
+@media(max-width:860px){.steps,.rv{grid-template-columns:1fr}.step{padding:24px 0 0}}
 </style>
 </head>
 <body>
@@ -155,11 +167,37 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
     <h2 class="reveal">Big. <em>Juicy.</em> Hot.</h2>
     <p class="lede reveal">Three favourites to start. Tap Order and your message is ready on WhatsApp.</p>
     <div class="menu">
-      <article class="item reveal"><div class="item__v"><span class="item__no">01</span><video muted loop playsinline autoplay preload="metadata" src="assets/bacon.mp4"></video></div><div class="item__t"><h3>The Bacon Stack</h3><p>Beef patty, crispy bacon, cheese and lettuce in a toasted bun.</p><a class="btn order-btn" data-item="The Bacon Stack" href="#order">Order</a></div></article>
-      <article class="item reveal"><div class="item__v"><span class="item__no">02</span><video muted loop playsinline autoplay preload="metadata" src="assets/grill.mp4"></video></div><div class="item__t"><h3>Flame-Grilled Classic</h3><p>Patties cooked over open flame, then built fresh when you order.</p><a class="btn order-btn" data-item="Flame-Grilled Classic" href="#order">Order</a></div></article>
-      <article class="item reveal"><div class="item__v"><span class="item__no">03</span><video muted loop playsinline autoplay preload="metadata" src="assets/fries.mp4"></video></div><div class="item__t"><h3>Loaded Fries</h3><p>Hot fries with sauce, made to share (or not).</p><a class="btn order-btn" data-item="Loaded Fries" href="#order">Order</a></div></article>
+      <article class="item reveal"><div class="item__v"><span class="item__no">01</span><video muted loop playsinline autoplay preload="metadata" src="assets/bacon.mp4"></video></div><div class="item__t"><h3>The Bacon Stack <span class="price">RM 00</span></h3><p>Beef patty, crispy bacon, cheese and lettuce in a toasted bun.</p><a class="btn order-btn" data-item="The Bacon Stack" href="#order">Order</a></div></article>
+      <article class="item reveal"><div class="item__v"><span class="item__no">02</span><video muted loop playsinline autoplay preload="metadata" src="assets/grill.mp4"></video></div><div class="item__t"><h3>Flame-Grilled Classic <span class="price">RM 00</span></h3><p>Patties cooked over open flame, then built fresh when you order.</p><a class="btn order-btn" data-item="Flame-Grilled Classic" href="#order">Order</a></div></article>
+      <article class="item reveal"><div class="item__v"><span class="item__no">03</span><video muted loop playsinline autoplay preload="metadata" src="assets/fries.mp4"></video></div><div class="item__t"><h3>Loaded Fries <span class="price">RM 00</span></h3><p>Hot fries with sauce, made to share (or not).</p><a class="btn order-btn" data-item="Loaded Fries" href="#order">Order</a></div></article>
     </div>
-    <p class="note">Sample menu. Dish names, descriptions and prices are placeholders: replace with the shop's real ones.</p>
+    <p class="note">Sample menu. Dish names, descriptions and prices (RM 00) are placeholders: replace with the shop's real ones.</p>
+  </div>
+</section>
+
+<section class="sheet sheet--black" id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2 class="reveal">Order in <em>three taps.</em></h2>
+    <p class="lede reveal">No app to download. Everything happens on WhatsApp.</p>
+    <div class="steps">
+      <div class="step reveal"><i>01</i><h3>Pick</h3><p>Choose a burger or fries from the menu above.</p></div>
+      <div class="step reveal"><i>02</i><h3>Send</h3><p>Your order message is ready on WhatsApp. Press send.</p></div>
+      <div class="step reveal"><i>03</i><h3>Collect</h3><p>We tell you when it is ready. Pick up fresh and hot.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE reviews: replace with real customers' words and a link to the real review -->
+<section class="sheet sheet--cream" id="reviews">
+  <div class="wrap">
+    <div class="eyebrow">Kind words</div>
+    <h2 class="reveal">What people <em>say.</em></h2>
+    <div class="rv">
+      <blockquote class="reveal">&ldquo;Placeholder review. Use a real customer's words, with permission.&rdquo;<b>Customer name</b><small>Replace before launch</small></blockquote>
+      <blockquote class="reveal">&ldquo;Placeholder review. Keep it short and about the taste.&rdquo;<b>Customer name</b><small>Replace before launch</small></blockquote>
+      <blockquote class="reveal">&ldquo;Placeholder review. Link to the Google review if possible.&rdquo;<b>Customer name</b><small>Replace before launch</small></blockquote>
+    </div>
   </div>
 </section>
 
