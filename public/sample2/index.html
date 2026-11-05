@@ -8,96 +8,108 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#0c1324;--ink2:#141d33;--gold:#e3a83a;--cream:#f4efe8;--mute:#aab2c6;--serif:"Cormorant Garamond",Georgia,serif;--sans:"DM Sans",system-ui,sans-serif}
+:root{--ink:#0c1324;--gold:#e3a83a;--cream:#f4efe8;--mute:#9aa3b8;--serif:"Cormorant Garamond",Georgia,serif;--sans:"DM Sans",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{background:var(--ink)}
 body{font-family:var(--sans);color:var(--cream);background:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 .hero{position:relative;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;isolation:isolate;
-  background:radial-gradient(60vw 60vw at 50% 62%,rgba(227,168,58,.22),transparent 62%),linear-gradient(180deg,#0c1324 0%,#101a30 100%)}
+  background:radial-gradient(46vw 46vw at 50% 52%,rgba(227,168,58,.26),transparent 66%),linear-gradient(180deg,#0c1324 0%,#0f182c 100%)}
+.wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
 /* nav */
-.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(1180px,calc(100% - 32px));margin:20px auto 0;padding:10px 12px 10px 20px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:relative;z-index:5}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:20px;padding:10px 12px 10px 22px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:relative;z-index:5}
 .logo{font:700 22px var(--serif);letter-spacing:.02em}
 .logo i{font-style:normal;color:var(--gold)}
 .nav ul{display:flex;gap:30px;list-style:none;font-size:14px;color:var(--mute)}
 .nav ul a:hover{color:#fff}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 24px;border-radius:999px;font-weight:700;font-size:14px;background:var(--gold);color:#1a1405;transition:transform .2s}
-.btn:hover{transform:translateY(-2px)}
-.btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
-.btn--ghost{background:transparent;color:var(--cream);border:1px solid rgba(255,255,255,.32)}
-/* stage */
-.stage{position:relative;width:min(1180px,calc(100% - 32px));margin:0 auto -78px;display:grid;grid-template-columns:1fr minmax(300px,420px) 1fr;align-items:end}
-.title{position:absolute;left:0;right:0;top:3%;z-index:-1;text-align:center;font:700 clamp(4.5rem,15.5vw,13.5rem)/.9 var(--serif);letter-spacing:-.03em;color:var(--cream);white-space:nowrap;
-  -webkit-mask-image:linear-gradient(180deg,#000 55%,rgba(0,0,0,.18) 100%);mask-image:linear-gradient(180deg,#000 55%,rgba(0,0,0,.18) 100%)}
-.title em{font:400 1.0em/.9 "Allura",cursive;color:var(--gold);letter-spacing:0;margin-left:.04em}
-.arch{position:absolute;left:50%;bottom:40px;width:min(400px,34vw);height:calc(88% - 110px);transform:translateX(-50%);border:1.5px solid rgba(227,168,58,.55);border-bottom:0;border-radius:999px 999px 0 0;z-index:-1}
-.portrait{grid-column:2;position:relative;align-self:end;justify-self:center;height:min(78svh,760px);width:auto;max-width:100%;object-fit:contain;display:block;filter:drop-shadow(0 30px 50px rgba(0,0,0,.45))}
-.side{align-self:center;padding-bottom:8vh;display:flex;flex-direction:column;gap:22px}
-.side--l{grid-column:1;padding-right:24px;align-items:flex-start}
-.side--r{grid-column:3;padding-left:24px;align-items:flex-start}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:999px;font-weight:700;font-size:15px;background:var(--gold);color:#1a1405;transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(227,168,58,.32)}
+.btn:focus-visible,.link:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.nav .btn{min-height:42px;padding:0 22px;font-size:14px}
+/* stage: portrait is the focal point */
+.stage{position:relative;display:grid;grid-template-columns:1fr minmax(320px,470px) 1fr;align-items:end;padding-top:2vh}
+.title{position:absolute;left:0;right:0;top:calc(4% - 26px);z-index:-1;text-align:center;font:700 clamp(4.5rem,14vw,12rem)/.9 var(--serif);letter-spacing:-.03em;color:rgba(150,170,212,.25);white-space:nowrap;user-select:none}
+.title em{font:400 1em/.9 "Allura",cursive;color:rgba(240,184,92,.38);letter-spacing:0;margin-left:.04em}
+.portrait{grid-column:2;justify-self:center;align-self:end;height:min(76svh,740px);width:auto;max-width:100%;object-fit:contain;display:block;
+  -webkit-mask-image:linear-gradient(180deg,#000 82%,transparent 100%);mask-image:linear-gradient(180deg,#000 82%,transparent 100%)}
+.side{align-self:center;padding-top:7vh;display:flex;flex-direction:column;gap:26px}
+.side--l{grid-column:1;padding-right:30px;align-items:flex-start}
+.side--r{grid-column:3;padding-left:40px;align-items:flex-start;gap:14px}
 .eyebrow{font:600 12px var(--sans);letter-spacing:.26em;text-transform:uppercase;color:var(--gold)}
-.lead{font:500 clamp(22px,2.1vw,30px)/1.25 var(--serif);max-width:12em}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
-.quote{font:italic 600 clamp(18px,1.6vw,23px)/1.3 var(--serif);max-width:15em;color:var(--cream)}
-.who{display:block;margin-top:10px;font:700 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
-.stars{color:var(--gold);letter-spacing:.2em;font-size:14px}
-/* bottom bar */
-.bar{width:min(1180px,calc(100% - 32px));margin:0 auto 22px;display:grid;grid-template-columns:repeat(3,1fr) auto;gap:0;align-items:center;border-radius:26px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);position:relative;z-index:3}
-.stat{padding:16px 24px;border-right:1px solid rgba(255,255,255,.12)}
-.stat b{display:block;font:700 clamp(24px,2.4vw,32px)/1.05 var(--serif);color:var(--gold);font-variant-numeric:lining-nums}
-.stat span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
-.stat--lic b{color:var(--cream)}
-.switch{position:relative;display:grid;grid-template-columns:1fr 1fr;margin:10px 12px;border-radius:999px;background:rgba(0,0,0,.32);padding:4px;min-width:250px;font-weight:700;font-size:14px}
-.switch a{position:relative;z-index:1;text-align:center;padding:11px 0;border-radius:999px}
-.switch a:first-child{background:var(--gold);color:#1a1405}
+.lead{font:500 clamp(24px,2.3vw,34px)/1.22 var(--serif);max-width:11em}
+.cta{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.link{font-weight:700;font-size:15px;color:var(--cream);padding-bottom:4px;border-bottom:1px solid rgba(244,239,232,.4);transition:border-color .2s,color .2s}
+.link:hover{color:var(--gold);border-color:var(--gold)}
+.pick{display:flex;flex-direction:column;gap:10px;align-items:flex-start;margin-top:6px}
+.pick small{font:700 11px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--mute)}
+.seg{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}
+.seg a{padding:10px 20px;border-radius:999px;font-weight:700;font-size:14px;color:var(--mute);transition:color .2s,background .2s}
+.seg a:hover{color:#fff}
+.seg a[aria-current="true"]{background:var(--cream);color:#0c1324}
+.quote{font:italic 500 clamp(17px,1.45vw,21px)/1.4 var(--serif);max-width:14em;color:rgba(244,239,232,.88)}
+.who{display:block;margin-top:16px;font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--cream)}
+.who small{display:block;margin-top:4px;font:500 12px var(--sans);letter-spacing:.04em;text-transform:none;color:var(--mute)}
+.mark{font:italic 600 54px/0.6 var(--serif);color:var(--gold);height:26px}
+/* stats: light row, no panel */
+.facts{display:flex;justify-content:center;padding:34px 0 40px;border-top:1px solid rgba(255,255,255,.1);margin-top:10px}
+.fact{text-align:center;padding:0 clamp(24px,5.5vw,72px)}
+.fact+.fact{border-left:1px solid rgba(255,255,255,.16)}
+.fact b{display:block;font:700 clamp(24px,2.3vw,32px)/1.05 var(--serif);color:var(--gold);font-variant-numeric:lining-nums}
+.fact span{display:block;margin-top:4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute)}
+.fact--lic b{color:var(--cream)}
 @media(max-width:860px){
   .nav ul{display:none}
   .hero{min-height:auto}
-  .stage{grid-template-columns:1fr;padding-top:24px}
-  .title{position:relative;top:auto;margin-top:8px;font-size:clamp(3.6rem,19vw,7rem);z-index:0;mask-image:none;-webkit-mask-image:none}
-  .portrait{grid-column:1;height:min(52svh,420px);margin-top:18px}
-  .stage{margin-bottom:0}
-  .arch{display:none}
-  .side--l,.side--r{grid-column:1;padding:18px 4px 0;align-items:center;text-align:center}
+  .stage{grid-template-columns:1fr;padding-top:20px}
+  .title{position:relative;top:auto;font-size:clamp(3.6rem,19vw,7rem);z-index:0;color:rgba(150,170,212,.28)}
+  .portrait{grid-column:1;height:min(54svh,430px);margin-top:6px}
+  .side--l,.side--r{grid-column:1;padding:22px 4px 0;align-items:center;text-align:center}
   .side{padding-bottom:0}
   .cta{justify-content:center}
-  .bar{grid-template-columns:1fr 1fr 1fr;margin-top:26px}
-  .stat{padding:14px 10px;text-align:center}
-  .switch{grid-column:1/-1;margin:0 12px 12px}
-  .stat span{font-size:10px;letter-spacing:.08em}
+  .pick{align-items:center}
+  .mark{display:none}
+  .facts{padding:26px 0 30px;margin-top:22px}
+  .fact{padding:0 12px}
+  .fact span{font-size:10px;letter-spacing:.1em}
 }
 @media(prefers-reduced-motion:no-preference){.title,.portrait{animation:rise .8s ease both}.portrait{animation-delay:.1s}@keyframes rise{from{opacity:0;transform:translateY(18px)}}}
 </style>
 </head>
 <body>
 <header class="hero">
-  <nav class="nav" aria-label="Main">
-    <a class="logo" href="#">Sample <i>Tang</i></a>
-    <ul><li><a href="#">Home</a></li><li><a href="#">Services</a></li><li><a href="#">Platforms</a></li><li><a href="#">Contact</a></li></ul>
-    <a class="btn" href="#">WhatsApp me</a>
-  </nav>
+  <div class="wrap">
+    <nav class="nav" aria-label="Main">
+      <a class="logo" href="#">Sample <i>Tang</i></a>
+      <ul><li><a href="#">Home</a></li><li><a href="#">Services</a></li><li><a href="#">Platforms</a></li><li><a href="#">Contact</a></li></ul>
+      <a class="btn" href="#">WhatsApp me</a>
+    </nav>
+  </div>
 
-  <div class="stage">
+  <div class="wrap stage">
     <h1 class="title">Sample <em>Tang</em></h1>
-    <div class="arch" aria-hidden="true"></div>
     <div class="side side--l">
       <span class="eyebrow">Property agent · Kuala Lumpur</span>
       <p class="lead">Find the right home, with an agent who does the homework.</p>
-      <div class="cta"><a class="btn" href="#">Contact now</a><a class="btn btn--ghost" href="#">See platforms</a></div>
+      <div class="cta">
+        <a class="btn" href="#">Contact now <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <a class="link" href="#">See platforms</a>
+      </div>
+      <div class="pick"><small id="pk">Browse properties</small><div class="seg" role="group" aria-labelledby="pk"><a href="#new" aria-current="true">New project</a><a href="#used">Used</a></div></div>
     </div>
-    <img class="portrait" src="assets/sample-tang.webp" alt="Sample Tang, property agent, smiling with arms crossed" width="860" height="1253">
+    <img class="portrait" src="assets/sample-tang.webp" alt="Sample Tang, property agent, smiling with arms crossed" width="860" height="1253" fetchpriority="high">
     <div class="side side--r">
-      <span class="stars" aria-label="Five stars">★★★★★</span>
-      <p class="quote">&ldquo;Very professional and patient. She did a lot of homework before I came.&rdquo;<span class="who">Happy client</span></p>
+      <span class="mark" aria-hidden="true">&ldquo;</span>
+      <!-- SAMPLE review: replace with a real client name, area and a link to the verified Google/PropertyGuru review -->
+      <p class="quote">Very professional and patient. She did a lot of homework before I came.<span class="who">Happy client, Mont Kiara<small>Google review, 2024</small></span></p>
     </div>
   </div>
 
   <!-- SAMPLE values: replace with the agent's real REN licence number, years and client count -->
-  <div class="bar">
-    <div class="stat stat--lic"><b>REN JW0611</b><span>Licensed agent</span></div>
-    <div class="stat"><b>5+</b><span>Years of experience</span></div>
-    <div class="stat"><b>700+</b><span>Happy clients</span></div>
-    <div class="switch" role="tablist"><a href="#">New project</a><a href="#">Used</a></div>
+  <div class="wrap facts">
+    <div class="fact fact--lic"><b>REN JW0611</b><span>Licensed agent</span></div>
+    <div class="fact"><b>5+</b><span>Years of experience</span></div>
+    <div class="fact"><b>700+</b><span>Happy clients</span></div>
   </div>
 </header>
 </body>
