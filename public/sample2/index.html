@@ -7,7 +7,7 @@
 <title>Sample Tang | Property Agent in Kuala Lumpur</title>
 <meta name="description" content="Sample Tang is a property agent in Kuala Lumpur. Message on WhatsApp for a free valuation.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Comfortaa:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Allura&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 <style>
 /* ===== Brand tokens: change these per client ===== */
 :root{
@@ -40,7 +40,7 @@ img{display:block;max-width:100%}
 
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--cream);overflow:hidden;isolation:isolate;display:flex;flex-direction:column;align-items:center;min-height:100svh;--ph:clamp(380px,calc(100svh - 360px),720px)}
-.hero__glow{position:absolute;left:50%;bottom:-10%;width:min(120vw,1100px);aspect-ratio:1;transform:translateX(-50%);border-radius:50%;z-index:-1;background:radial-gradient(closest-side,rgba(227,168,58,.32),rgba(227,168,58,.1) 60%,transparent 72%)}
+.hero__glow{position:absolute;left:50%;bottom:-10%;width:min(120vw,980px);aspect-ratio:1;transform:translateX(-50%);border-radius:50%;z-index:-1;background:radial-gradient(closest-side,rgba(227,168,58,.32),rgba(227,168,58,.1) 60%,transparent 72%)}
 .nav{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:18px;padding:10px 12px 10px 18px;border-radius:999px;background:var(--ink);color:#fff;width:min(980px,100% - 32px)}
 .logo{white-space:nowrap;display:flex;align-items:center;gap:10px;font:700 17px var(--head);text-decoration:none}
 .logo i{width:32px;height:32px;border-radius:50%;background:var(--gold);color:var(--ink);display:grid;place-items:center;font:800 13px var(--head);font-style:normal}
@@ -59,27 +59,29 @@ img{display:block;max-width:100%}
 .cta.swapped .sw__w{transform:translateX(calc(-100% - 10px))}
 .handle{position:absolute;left:12%;bottom:40%;font:700 clamp(20px,2.2vw,30px) "Caveat",cursive;transform:rotate(-6deg);color:var(--ink)}
 .mq{display:none;position:relative;z-index:3;background:var(--cream);padding:8px 24px 36px;text-align:center}
-.mq p{font:italic 500 18px/1.5 var(--elegant);color:var(--ink);max-width:30em;margin:0 auto}
+.mq p{font:italic 600 21px/1.4 "Cormorant Garamond",Georgia,serif;color:var(--ink);max-width:30em;margin:0 auto}
 .mq .contact{margin-top:18px}
-.who{display:block;margin-top:8px;font:600 12px var(--elegant);color:var(--mute);letter-spacing:.14em;text-transform:uppercase}
+.who{display:block;margin-top:8px;font:700 12px "Cormorant Garamond",Georgia,serif;color:var(--mute);letter-spacing:.14em;text-transform:uppercase}
 /* annotation notes: plain text + hand-drawn knot arrow, no boxes */
 .note{position:absolute;display:flex;align-items:center;gap:6px;color:var(--ink);font-family:var(--elegant)}
 .note .loop{width:clamp(70px,8.5vw,120px);height:auto;flex:none;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .note--r .loop{transform:scaleX(-1)}
 .note small{display:block;font:600 11px var(--elegant);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
 .note strong{display:block;font:600 clamp(20px,2.1vw,30px)/1.1 var(--elegant);letter-spacing:-.01em}
-.note--lic,.note--exp,.note--hc{font-family:"Comfortaa","Segoe UI",sans-serif}
-.note--lic small,.note--lic strong,.note--exp strong,.note--hc strong{font-family:"Comfortaa","Segoe UI",sans-serif}
+.note--lic,.note--exp,.note--hc{font-family:"Cormorant Garamond",Georgia,serif}
+.note--lic small{font:600 12px "Cormorant Garamond",Georgia,serif;letter-spacing:.26em}
+.note--lic strong{font:700 clamp(24px,2.2vw,32px)/1.1 "Cormorant Garamond",Georgia,serif;font-variant-numeric:lining-nums;letter-spacing:.01em}
+.note--exp strong,.note--hc strong{font:400 clamp(30px,3vw,44px)/1.02 "Allura","Cormorant Garamond",cursive;letter-spacing:0}
 .note--lic,.note--exp,.note--hc{left:3%;width:clamp(250px,27vw,320px);justify-content:space-between}
 .note--lic > div,.note--exp > div,.note--hc > div{flex:1}
 .note--lic{top:3%}
 .note--exp{top:33%}
-.note--exp strong b,.note--hc strong b{color:var(--gold-d);font-weight:700}
+.note--exp strong b,.note--hc strong b{color:var(--gold-d);font:700 .82em "Cormorant Garamond",Georgia,serif;font-variant-numeric:lining-nums}
 .note--hc{top:63%}
 .note--q,.note--c{right:3%;width:clamp(300px,33vw,400px)}
 .note--q,.note--c{gap:18px}
 .note--q{top:3%}
-.note--q p{font:italic 500 clamp(15px,1.45vw,20px)/1.45 var(--elegant);max-width:15em}
+.note--q p{font:italic 600 clamp(18px,1.7vw,24px)/1.28 "Cormorant Garamond",Georgia,serif;max-width:15em}
 .note--c{top:33%}
 .contact{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:var(--gold);color:var(--ink);font:700 16px var(--elegant);text-decoration:none;box-shadow:0 14px 30px -14px rgba(201,143,34,.9);transition:transform .25s,background .25s}
 .contact:hover{transform:translateY(-2px);background:var(--gold-d)}
@@ -168,20 +170,20 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
 
 /* desktop: notes sit ON the round orange glow, each one anchored to a point on its circle */
 @media(min-width:861px){
-  .stage{--S:min(120vw,1100px);--R:calc(var(--S)*.33);--cy:calc(10svh + var(--ph) - var(--S)/2)}
+  .stage{--S:min(120vw,980px);--R:calc(var(--S)*.37);--cy:calc(10svh + var(--ph) - var(--S)/2)}
   .stage .note{display:block;width:0;height:0;gap:0;right:auto;left:calc(50% - var(--R)*var(--c));top:calc(var(--cy) + var(--R)*var(--s))}
   .stage .note--r{left:calc(50% + var(--R)*var(--c))}
   .stage .note > div,.stage .note > a{position:absolute;top:0;transform:translateY(-50%);white-space:nowrap}
-  .stage .note > div{right:14px;text-align:right;flex:none}
-  .stage .note--r > div,.stage .note--r > a{right:auto;left:14px;text-align:left}
-  .stage .note .loop{position:absolute;top:0;left:0;width:var(--aw);transform:translateY(-50%)}
-  .stage .note--r .loop{left:auto;right:0;transform:translateY(-50%) scaleX(-1)}
-  .note--lic{--c:.978;--s:-.208;--aw:170px}
-  .note--exp{--c:.94;--s:.342;--aw:130px}
-  .note--hc{--c:.643;--s:.766;--aw:70px}
-  .note--q{--c:.978;--s:-.208;--aw:170px}
-  .note--c{--c:.819;--s:.574;--aw:110px}
-  .note--q p{white-space:normal;width:min(15em,calc(50vw - var(--R)*.98 - 34px))}
+  .stage .note > div{right:calc(var(--aw) + 14px);text-align:right;flex:none}
+  .stage .note--r > div,.stage .note--r > a{right:auto;left:calc(var(--aw) + 14px);text-align:left}
+  .stage .note .loop{position:absolute;top:0;right:0;width:var(--aw);transform:translateY(-50%)}
+  .stage .note--r .loop{right:auto;left:0;transform:translateY(-50%) scaleX(-1)}
+  .note--lic{--c:.978;--s:-.208;--aw:76px}
+  .note--exp{--c:.94;--s:.342;--aw:76px}
+  .note--hc{--c:.643;--s:.766;--aw:76px}
+  .note--q{--c:.978;--s:-.208;--aw:76px}
+  .note--c{--c:.819;--s:.574;--aw:76px}
+  .note--q p{white-space:normal;width:min(15em,calc(50vw - var(--R)*.98 - var(--aw) - 38px))}
 }
 /* ---------- phone ---------- */
 @media(max-width:860px){
@@ -190,7 +192,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .note--q,.note--c{display:none}
   .note .loop{display:none}
   .note--lic{left:16px;top:0}.note--exp{left:auto;right:16px;top:0;text-align:right}.note--hc{left:auto;right:16px;top:50px;text-align:right}
-  .note small{font-size:10px}.note strong{font-size:17px}
+  .note small{font-size:10px}.note strong{font-size:17px}.note--lic strong{font-size:21px}.note--exp strong,.note--hc strong{font-size:27px}
   .mq{display:block}
   .seg{bottom:16px}
   .sheet{padding:80px 0 90px;border-radius:34px 34px 0 0}
