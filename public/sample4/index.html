@@ -36,10 +36,8 @@ img,video{display:block;max-width:100%}
 
 /* ---------- hero: black world, flame photo behind, tall burger clip bleeding off the right ---------- */
 .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;isolation:isolate;overflow:hidden}
-.hero__bg{position:absolute;inset:0;z-index:-4}
-.hero__bg img{width:100%;height:100%;object-fit:cover;object-position:60% center;animation:push 26s ease-in-out infinite alternate;filter:saturate(1.05)}
-@keyframes push{from{transform:scale(1)}to{transform:scale(1.07)}}
-.hero__shade{position:absolute;inset:0;z-index:-3;background:linear-gradient(90deg,rgba(8,8,8,.96) 0%,rgba(8,8,8,.86) 34%,rgba(8,8,8,.45) 62%,rgba(8,8,8,.25) 100%),linear-gradient(180deg,rgba(8,8,8,.7) 0%,transparent 24%,transparent 70%,rgba(8,8,8,.95) 100%)}
+.fire{position:absolute;top:0;bottom:0;left:0;width:76vw;height:100%;object-fit:cover;object-position:62% 50%;z-index:-4;-webkit-mask-image:linear-gradient(90deg,#000 0%,#000 58%,transparent 100%);mask-image:linear-gradient(90deg,#000 0%,#000 58%,transparent 100%)}
+.hero__shade{position:absolute;inset:0;z-index:-3;background:linear-gradient(90deg,rgba(8,8,8,.62) 0%,rgba(8,8,8,.5) 40%,rgba(8,8,8,.15) 70%,rgba(8,8,8,0) 100%),linear-gradient(180deg,rgba(8,8,8,.55) 0%,transparent 22%,transparent 74%,rgba(8,8,8,.9) 100%)}
 .hero__clip{position:absolute;top:0;right:0;bottom:0;width:38vw;z-index:-2;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 18%,#000 40%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 18%,#000 40%)}
 .hero__clip video{width:100%;height:100%;object-fit:cover;object-position:50% 45%;filter:contrast(1.06) saturate(1.08)}
 .hero__grain{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
@@ -114,6 +112,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .hero{display:flex;flex-direction:column}
   .nav{order:0}
   .hero__body{order:2;padding:0 0 70px}
+  .fire{width:100%;object-position:60% 50%;-webkit-mask-image:none;mask-image:none}
+  .hero__shade{background:linear-gradient(180deg,rgba(8,8,8,.55) 0%,rgba(8,8,8,.7) 100%)}
   .copy{max-width:none}
   h1{font-size:clamp(2.9rem,15vw,4.8rem)}
   .eyebrow{font-size:11px;letter-spacing:.14em}
@@ -121,12 +121,12 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .sheet{padding:80px 0 90px;border-radius:34px 34px 0 0}
   .shade{display:block}
 }
-@media(prefers-reduced-motion:reduce){h1 span,.lead,.ctas,.facts{opacity:1;transform:none;animation:none}.hero__bg img{animation:none}.band__in{animation:none}.reveal{opacity:1;transform:none;transition:none}}
+@media(prefers-reduced-motion:reduce){.fire{display:none}h1 span,.lead,.ctas,.facts{opacity:1;transform:none;animation:none}.hero__bg img{animation:none}.band__in{animation:none}.reveal{opacity:1;transform:none;transition:none}}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="hero__bg"><img src="assets/flame.webp" alt="" width="1800" height="1200" fetchpriority="high"></div>
+  <video class="fire" muted loop playsinline autoplay preload="auto" poster="assets/fire-poster.webp" aria-hidden="true" src="assets/fire.mp4"></video>
   <div class="hero__shade"></div>
   <div class="hero__clip" aria-hidden="true"><video muted loop playsinline autoplay preload="auto" poster="assets/burger-poster.png" src="assets/burger.mp4"></video></div>
   <div class="hero__grain"></div>
@@ -185,6 +185,9 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
 (function(){
   var NUMBER='60000000000'; /* replace with the shop's WhatsApp number, digits only */
   function link(item){var t='Hi, I would like to order'+(item?': '+item:'')+'. Thank you!';return 'https://wa.me/'+NUMBER+'?text='+encodeURIComponent(t)}
+  var fire=document.querySelector('.fire');
+  /* ?shot=1 swaps the flame video for a still frame (used only to make preview pictures) */
+  if(/[?&]shot=1/.test(location.search)&&fire){var im=new Image();im.className='fire';im.alt='';im.src='assets/fire-poster.webp';fire.replaceWith(im)}
   document.getElementById('wa').href=link('');
   document.getElementById('wa').target='_blank';document.getElementById('wa').rel='noopener';
   [].slice.call(document.querySelectorAll('.order-btn')).forEach(function(b){b.href=link(b.getAttribute('data-item'));b.target='_blank';b.rel='noopener'});
