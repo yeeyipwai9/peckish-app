@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Patty &amp; Co | Flame-grilled burgers (sample)</title>
+<meta name="description" content="Sample burger shop website: flame-grilled burgers, loaded fries and WhatsApp ordering.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Brand tokens: change these per client ===== */
+:root{
+  --bg:#080808;
+  --ink:#f6f1e6;
+  --mute:#a7a296;
+  --lime:#c8ff3a;        /* the ONE accent */
+  --lime-d:#a8e01a;
+  --cream:#f1ecdf;
+  --line:rgba(246,241,230,.16);
+  --head:"Archivo Black","Arial Black",Impact,sans-serif;
+  --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:17px;line-height:1.6;overflow-x:hidden}
+a{color:inherit}
+img,video{display:block;max-width:100%}
+.wrap{width:min(1180px,100% - 32px);margin-inline:auto}
+:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;padding:0 28px;border-radius:14px;background:var(--lime);color:#0a0a0a;font:800 15px var(--sans);letter-spacing:.06em;text-transform:uppercase;text-decoration:none;border:0;cursor:pointer;transition:transform .25s,background .25s,box-shadow .25s;box-shadow:0 14px 34px -14px rgba(200,255,58,.65)}
+.btn:hover{transform:translateY(-2px);background:#d8ff6a}
+.btn--ghost{background:transparent;color:var(--ink);border:2px solid rgba(246,241,230,.5);box-shadow:none}
+.btn--ghost:hover{background:var(--ink);color:#0a0a0a}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- hero: black world, flame photo behind, tall burger clip bleeding off the right ---------- */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;isolation:isolate;overflow:hidden}
+.hero__bg{position:absolute;inset:0;z-index:-4}
+.hero__bg img{width:100%;height:100%;object-fit:cover;object-position:60% center;animation:push 26s ease-in-out infinite alternate;filter:saturate(1.05)}
+@keyframes push{from{transform:scale(1)}to{transform:scale(1.07)}}
+.hero__shade{position:absolute;inset:0;z-index:-3;background:linear-gradient(90deg,rgba(8,8,8,.96) 0%,rgba(8,8,8,.86) 34%,rgba(8,8,8,.45) 62%,rgba(8,8,8,.25) 100%),linear-gradient(180deg,rgba(8,8,8,.7) 0%,transparent 24%,transparent 70%,rgba(8,8,8,.95) 100%)}
+.hero__clip{position:absolute;top:0;right:0;bottom:0;width:38vw;z-index:-2;-webkit-mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 18%,#000 40%);mask-image:linear-gradient(90deg,transparent 0%,rgba(0,0,0,.6) 18%,#000 40%)}
+.hero__clip video{width:100%;height:100%;object-fit:cover;object-position:50% 45%;filter:contrast(1.06) saturate(1.08)}
+.hero__grain{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.08;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0}
+.logo{font:400 22px var(--head);letter-spacing:.02em;text-decoration:none;display:flex;align-items:center;gap:10px}
+.logo i{width:14px;height:14px;background:var(--lime);display:inline-block;transform:rotate(45deg)}
+.nav ul{display:flex;gap:34px;list-style:none;font:700 13px var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.nav ul a{text-decoration:none;opacity:.9}
+.nav ul a:hover{color:var(--lime)}
+.nav .btn{min-height:46px;padding:0 22px;font-size:13px}
+.hero__body{flex:1;display:flex;align-items:center;padding:20px 0 70px}
+.copy{max-width:min(720px,58%)}
+.eyebrow{display:flex;align-items:center;gap:14px;font:700 12.5px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--lime)}
+.eyebrow::before{content:"";width:34px;height:3px;background:var(--lime)}
+h1{font:400 clamp(3.2rem,9vw,8.4rem)/.88 var(--head);text-transform:uppercase;letter-spacing:-.01em;margin:22px 0 24px}
+h1 span{display:block;opacity:0;transform:translateY(24px);animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards}
+h1 span:nth-child(2){animation-delay:.12s}h1 span:nth-child(3){animation-delay:.24s}
+h1 em{font-style:normal;color:var(--lime)}
+@keyframes rise{to{opacity:1;transform:none}}
+.lead{font-size:clamp(1rem,1.4vw,1.2rem);color:#d6d1c4;max-width:28em;margin-bottom:30px;opacity:0;animation:rise .8s .45s ease forwards}
+.ctas{display:flex;flex-wrap:wrap;gap:12px;opacity:0;animation:rise .8s .6s ease forwards}
+.facts{display:flex;flex-wrap:wrap;gap:8px 26px;margin-top:34px;padding-top:20px;border-top:1px solid var(--line);font:700 12px var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--mute);max-width:560px;opacity:0;animation:rise .8s .75s ease forwards}
+.facts span::before{content:"";display:inline-block;width:8px;height:8px;background:var(--lime);margin-right:10px;transform:rotate(45deg)}
+
+/* lime ticker band */
+.band{position:relative;z-index:3;background:var(--lime);color:#0a0a0a;overflow:hidden;white-space:nowrap;padding:16px 0}
+.band__in{display:inline-flex;animation:band 30s linear infinite}
+.band span{font:400 clamp(20px,2.6vw,32px) var(--head);text-transform:uppercase;padding:0 26px;display:inline-flex;align-items:center;gap:52px}
+.band span::after{content:"\2726";font-size:.7em}
+@keyframes band{to{transform:translateX(-50%)}}
+
+/* sheets: next block rises with rounded top corners */
+.sheet{position:relative;z-index:2;border-radius:46px 46px 0 0;margin-top:-1px;padding:100px 0 110px}
+.sheet--cream{background:var(--cream);color:#0c0c0c}
+.sheet--black{background:var(--bg);color:var(--ink)}
+.sheet--cream .eyebrow{color:#0c0c0c}.sheet--cream .eyebrow::before{background:#0c0c0c}
+h2{font:400 clamp(2.4rem,6vw,5rem)/.92 var(--head);text-transform:uppercase;letter-spacing:-.01em;margin:14px 0 14px}
+h2 em{font-style:normal;background:var(--lime);padding:0 .12em;color:#0a0a0a}
+.sheet--black h2 em{background:none;color:var(--lime);padding:0}
+.lede{max-width:34em;color:#5c584e}
+.sheet--black .lede{color:var(--mute)}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.reveal.on{opacity:1;transform:none}
+.menu{margin-top:46px;display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.item{background:#0c0c0c;color:var(--ink);border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
+.item__v{position:relative;aspect-ratio:4/3;overflow:hidden;background:#000}
+.item__v video{width:100%;height:100%;object-fit:cover}
+.item__no{position:absolute;left:14px;top:14px;background:var(--lime);color:#0a0a0a;font:400 15px var(--head);padding:6px 12px;border-radius:10px}
+.item__t{padding:22px 22px 24px;display:flex;flex-direction:column;gap:8px;flex:1}
+.item h3{font:400 clamp(1.4rem,2vw,1.9rem)/1 var(--head);text-transform:uppercase}
+.item p{color:var(--mute);font-size:15px}
+.item .btn{margin-top:auto;min-height:48px;font-size:13px}
+.item__t p{margin-bottom:14px}
+
+.note{margin-top:26px;font-size:13px;color:#6b665a}
+@media(max-width:900px){.menu{grid-template-columns:1fr}}
+
+/* order */
+.order{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center}
+.info{list-style:none;display:grid;gap:14px}
+.info li{padding:16px 0;border-bottom:1px solid var(--line)}
+.info b{display:block;font:700 12px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--lime);margin-bottom:2px}
+@media(max-width:860px){.order{grid-template-columns:1fr;gap:34px}}
+footer{background:var(--bg);color:var(--mute);font-size:14px;padding:0 0 30px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--line);padding-top:24px}
+
+/* ---------- phone ---------- */
+@media(max-width:860px){
+  .hero{min-height:0}
+  .nav ul{display:none}
+  .hero__clip{position:relative;width:100%;height:44vh;min-height:280px;order:1;z-index:-2;-webkit-mask-image:linear-gradient(0deg,transparent 0%,#000 38%);mask-image:linear-gradient(0deg,transparent 0%,#000 38%)}
+  .hero{display:flex;flex-direction:column}
+  .nav{order:0}
+  .hero__body{order:2;padding:0 0 70px}
+  .copy{max-width:none}
+  h1{font-size:clamp(2.9rem,15vw,4.8rem)}
+  .eyebrow{font-size:11px;letter-spacing:.14em}
+  .ctas .btn{flex:1 1 100%}
+  .sheet{padding:80px 0 90px;border-radius:34px 34px 0 0}
+  .shade{display:block}
+}
+@media(prefers-reduced-motion:reduce){h1 span,.lead,.ctas,.facts{opacity:1;transform:none;animation:none}.hero__bg img{animation:none}.band__in{animation:none}.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero__bg"><img src="assets/flame.webp" alt="" width="1800" height="1200" fetchpriority="high"></div>
+  <div class="hero__shade"></div>
+  <div class="hero__clip" aria-hidden="true"><video muted loop playsinline autoplay preload="auto" poster="assets/burger-poster.png" src="assets/burger.mp4"></video></div>
+  <div class="hero__grain"></div>
+  <div class="wrap nav">
+    <a class="logo" href="#"><i></i>Patty &amp; Co</a>
+    <ul><li><a href="#menu">Menu</a></li><li><a href="#order">Order</a></li></ul>
+    <a class="btn" href="#order">Order now</a>
+  </div>
+  <div class="wrap hero__body">
+    <div class="copy">
+      <div class="eyebrow">Flame-grilled &middot; Johor Bahru</div>
+      <h1><span>Burgers</span><span>off the</span><span><em>flame.</em></span></h1>
+      <p class="lead">Fresh patties, toasted buns and fries, made to order. Order on WhatsApp and pick up when it's ready.</p>
+      <div class="ctas"><a class="btn" href="#order">Order on WhatsApp <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a><a class="btn btn--ghost" href="#menu">See the menu</a></div>
+      <div class="facts"><span>Fresh beef</span><span>Toasted buns</span><span>Made to order</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="band" aria-hidden="true"><div class="band__in"><span>Flame-grilled</span><span>Fresh beef</span><span>Toasted buns</span><span>Loaded fries</span><span>Made to order</span><span>Flame-grilled</span><span>Fresh beef</span><span>Toasted buns</span><span>Loaded fries</span><span>Made to order</span></div></div>
+
+<main>
+<section class="sheet sheet--cream" id="menu">
+  <div class="wrap">
+    <div class="eyebrow">The menu</div>
+    <h2 class="reveal">Big. <em>Juicy.</em> Hot.</h2>
+    <p class="lede reveal">Three favourites to start. Tap Order and your message is ready on WhatsApp.</p>
+    <div class="menu">
+      <article class="item reveal"><div class="item__v"><span class="item__no">01</span><video muted loop playsinline autoplay preload="metadata" src="assets/bacon.mp4"></video></div><div class="item__t"><h3>The Bacon Stack</h3><p>Beef patty, crispy bacon, cheese and lettuce in a toasted bun.</p><a class="btn order-btn" data-item="The Bacon Stack" href="#order">Order</a></div></article>
+      <article class="item reveal"><div class="item__v"><span class="item__no">02</span><video muted loop playsinline autoplay preload="metadata" src="assets/grill.mp4"></video></div><div class="item__t"><h3>Flame-Grilled Classic</h3><p>Patties cooked over open flame, then built fresh when you order.</p><a class="btn order-btn" data-item="Flame-Grilled Classic" href="#order">Order</a></div></article>
+      <article class="item reveal"><div class="item__v"><span class="item__no">03</span><video muted loop playsinline autoplay preload="metadata" src="assets/fries.mp4"></video></div><div class="item__t"><h3>Loaded Fries</h3><p>Hot fries with sauce, made to share (or not).</p><a class="btn order-btn" data-item="Loaded Fries" href="#order">Order</a></div></article>
+    </div>
+    <p class="note">Sample menu. Dish names, descriptions and prices are placeholders: replace with the shop's real ones.</p>
+  </div>
+</section>
+
+<section class="sheet sheet--black" id="order">
+  <div class="wrap order">
+    <div class="reveal">
+      <div class="eyebrow">Order</div>
+      <h2>Hungry? <em>Order now.</em></h2>
+      <p class="lede">Pick what you want and message us on WhatsApp. We reply with the time it will be ready.</p>
+      <p style="margin-top:26px"><a class="btn" id="wa" href="#">Order on WhatsApp <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a></p>
+    </div>
+    <ul class="info reveal">
+      <li><b>WhatsApp</b>+60 0-000 0000 (placeholder)</li>
+      <li><b>Address</b>Taman Example, 81100 Johor Bahru</li>
+      <li><b>Hours</b>Every day, 11am to 10pm (placeholder)</li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer><div class="wrap"><span>&copy; 2026 Patty &amp; Co (sample)</span><span>Flame-grilled &middot; Johor Bahru</span></div></footer>
+
+<script>
+(function(){
+  var NUMBER='60000000000'; /* replace with the shop's WhatsApp number, digits only */
+  function link(item){var t='Hi, I would like to order'+(item?': '+item:'')+'. Thank you!';return 'https://wa.me/'+NUMBER+'?text='+encodeURIComponent(t)}
+  document.getElementById('wa').href=link('');
+  document.getElementById('wa').target='_blank';document.getElementById('wa').rel='noopener';
+  [].slice.call(document.querySelectorAll('.order-btn')).forEach(function(b){b.href=link(b.getAttribute('data-item'));b.target='_blank';b.rel='noopener'});
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('on');io.unobserve(x.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+})();
+</script>
+</body>
+</html>
