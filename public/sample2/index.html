@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sample Tang | Property Agent in Kuala Lumpur</title>
-<meta name="description" content="Sample Tang is a property agent in Kuala Lumpur.">
+<meta name="description" content="Sample Tang is a property agent in Kuala Lumpur. New projects and used homes, advertised on PropertyGuru, iProperty, EdgeProp and more.">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"RealEstateAgent","name":"Sample Tang","description":"Property agent in Kuala Lumpur for new projects and used homes.","areaServed":"Kuala Lumpur"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -74,15 +75,78 @@ a{color:inherit;text-decoration:none}
   .fact span{font-size:10px;letter-spacing:.1em}
 }
 @media(prefers-reduced-motion:no-preference){.title,.portrait{animation:rise .8s ease both}.portrait{animation-delay:.1s}@keyframes rise{from{opacity:0;transform:translateY(18px)}}}
+/* ---------- sections below the hero ---------- */
+html{scroll-behavior:smooth}
+.hero{padding-bottom:20px}
+.sheet{position:relative;z-index:2;border-radius:46px 46px 0 0;margin-top:-30px;padding:96px 0 110px}
+.sheet--cream{background:var(--cream);color:#0c1324}
+.sheet--navy{background:#111b31;color:var(--cream)}
+.sheet h2{font:700 clamp(2rem,4.4vw,3.4rem)/1.04 var(--serif);letter-spacing:-.015em;margin:14px 0 14px}
+.sheet h2 em{font-family:"Allura",cursive;font-style:normal;font-weight:400;color:#b07c14;font-size:1.18em;letter-spacing:0}
+.sheet--navy h2 em{color:var(--gold)}
+.sheet .eb{font:700 12px var(--sans);letter-spacing:.26em;text-transform:uppercase;color:#b07c14;display:flex;align-items:center;gap:12px}
+.sheet .eb::before{content:"";width:30px;height:1px;background:currentColor}
+.sheet--navy .eb{color:var(--gold)}
+.lede2{font-size:17px;line-height:1.6;max-width:36em;color:#4b5468}
+.sheet--navy .lede2{color:var(--mute)}
+/* platforms: plain text wordmarks, no logos */
+.plat{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid rgba(12,19,36,.14)}
+.plat li{list-style:none;padding:26px 8px;border-bottom:1px solid rgba(12,19,36,.14);font:600 clamp(20px,2.2vw,28px)/1.1 var(--serif);display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.plat li:not(:nth-child(3n)){border-right:1px solid rgba(12,19,36,.14);padding-right:20px}
+.plat li:not(:nth-child(3n+1)){padding-left:24px}
+.plat small{font:600 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#8a7a52;white-space:nowrap}
+.fineprint{margin-top:22px;font-size:13px;color:#6b7387}
+/* services: two real options */
+.two{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.opt{padding:34px 32px 32px;border-radius:28px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:14px}
+.opt b{font:700 clamp(26px,2.6vw,34px)/1.05 var(--serif);color:var(--cream)}
+.opt p{color:var(--mute);font-size:16px;line-height:1.55}
+.opt ul{list-style:none;display:grid;gap:8px;margin:6px 0 10px;color:var(--cream);font-size:15px}
+.opt li::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:12px;vertical-align:middle}
+.opt .btn{align-self:flex-start;margin-top:auto}
+.steps{margin-top:60px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(255,255,255,.14)}
+.step{padding:28px 28px 0 0}
+.step i{font:600 38px/1 var(--serif);color:var(--gold);font-style:normal;font-variant-numeric:lining-nums}
+.step h3{font:700 22px var(--serif);margin:12px 0 6px}
+.step p{color:var(--mute);font-size:15px;line-height:1.55}
+/* reviews: placeholders, clearly flagged */
+.rv{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:36px}
+.rv blockquote{font:italic 600 21px/1.4 var(--serif)}
+.rv b{display:block;margin-top:16px;font:700 12px var(--sans);letter-spacing:.14em;text-transform:uppercase}
+.rv small{display:block;margin-top:4px;color:#6b7387;font-size:12px}
+/* contact */
+.book{margin-top:44px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start}
+.info{list-style:none;display:grid;gap:16px;margin-top:26px}
+.info li{padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.14);color:var(--cream)}
+.info b{display:block;font:700 11px var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:4px}
+.form{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:26px;padding:30px;display:grid;gap:16px}
+.form label{display:grid;gap:8px;font:700 11px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--mute)}
+.form select,.form input{min-height:50px;border-radius:14px;border:1px solid rgba(255,255,255,.2);background:rgba(8,13,26,.6);color:var(--cream);font:500 16px var(--sans);padding:0 16px;letter-spacing:0;text-transform:none}
+.form select:focus-visible,.form input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.form button{border:0;cursor:pointer;font-family:var(--sans)}
+.form small{color:var(--mute);font-size:13px}
+footer{background:#0a1120;color:#8f99ae;font-size:14px;padding:0 0 30px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid rgba(255,255,255,.14);padding-top:24px}
+@media(max-width:860px){
+  .sheet{padding:72px 0 80px;border-radius:34px 34px 0 0}
+  .plat{grid-template-columns:1fr 1fr}
+  .plat li{padding:20px 4px !important;border-right:0 !important}
+  .plat li:nth-child(odd){border-right:1px solid rgba(12,19,36,.14) !important;padding-right:16px !important}
+  .plat li:nth-child(even){padding-left:18px !important}
+  .two,.book,.rv{grid-template-columns:1fr;gap:22px}
+  .steps{grid-template-columns:1fr}
+  .step{padding:24px 0 0}
+}
+
 </style>
 </head>
 <body>
-<header class="hero">
+<header class="hero" id="top">
   <div class="wrap">
     <nav class="nav" aria-label="Main">
-      <a class="logo" href="#">Sample <i>Tang</i></a>
-      <ul><li><a href="#">Home</a></li><li><a href="#">Services</a></li><li><a href="#">Platforms</a></li><li><a href="#">Contact</a></li></ul>
-      <a class="btn" href="#">WhatsApp me</a>
+      <a class="logo" href="#top">Sample <i>Tang</i></a>
+      <ul><li><a href="#top">Home</a></li><li><a href="#services">Services</a></li><li><a href="#platforms">Platforms</a></li><li><a href="#contact">Contact</a></li></ul>
+      <a class="btn" href="#contact">WhatsApp me</a>
     </nav>
   </div>
 
@@ -92,8 +156,8 @@ a{color:inherit;text-decoration:none}
       <span class="eyebrow">Property agent · Kuala Lumpur</span>
       <p class="lead">Find the right home, with an agent who does the homework.</p>
       <div class="cta">
-        <a class="btn" href="#">Contact now <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
-        <a class="link" href="#">See platforms</a>
+        <a class="btn" href="#contact">Contact now <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+        <a class="link" href="#platforms">See platforms</a>
       </div>
       <div class="pick"><small id="pk">Browse properties</small><div class="seg" role="group" aria-labelledby="pk"><a href="#new" aria-current="true">New project</a><a href="#used">Used</a></div></div>
     </div>
@@ -112,5 +176,114 @@ a{color:inherit;text-decoration:none}
     <div class="fact"><b>700+</b><span>Happy clients</span></div>
   </div>
 </header>
+<main>
+<section class="sheet sheet--cream" id="platforms">
+  <div class="wrap">
+    <div class="eb">Where I sell</div>
+    <h2>Where your property <em>gets seen.</em></h2>
+    <p class="lede2">I advertise on the platforms Malaysian buyers and renters actually use, then follow up every enquiry myself.</p>
+    <!-- SAMPLE list: keep only the platforms the agent really uses -->
+    <ul class="plat">
+      <li>PropertyGuru<small>Listings</small></li>
+      <li>iProperty<small>Listings</small></li>
+      <li>EdgeProp<small>Listings</small></li>
+      <li>Mudah.my<small>Classifieds</small></li>
+      <li>Facebook Marketplace<small>Social</small></li>
+      <li>Carousell<small>Classifieds</small></li>
+      <li>Instagram<small>Social</small></li>
+      <li>TikTok<small>Video</small></li>
+      <li>WhatsApp groups<small>Direct</small></li>
+    </ul>
+    <p class="fineprint">Platform names belong to their owners. Shown only as places where listings are advertised.</p>
+  </div>
+</section>
+
+<section class="sheet sheet--navy" id="services">
+  <div class="wrap">
+    <div class="eb">How I can help</div>
+    <h2>New project or <em>used,</em> one agent.</h2>
+    <p class="lede2">Tell me which one you are looking at. I plan the viewings and the paperwork with you.</p>
+    <div class="two">
+      <article class="opt" id="new">
+        <b>New project</b>
+        <p>Launches and developer projects across the Klang Valley.</p>
+        <ul><li>Unit and layout comparison</li><li>Booking and loan guidance</li><li>Developer and progress checks</li></ul>
+        <a class="btn" href="#contact" data-pick="New project">Ask about new projects</a>
+      </article>
+      <article class="opt" id="used">
+        <b>Used</b>
+        <p>Resale homes, with honest advice on price and condition.</p>
+        <ul><li>Fair price check</li><li>Viewing schedule that suits you</li><li>Help from offer to key handover</li></ul>
+        <a class="btn" href="#contact" data-pick="Used">Ask about used homes</a>
+      </article>
+    </div>
+    <div class="steps">
+      <div class="step"><i>01</i><h3>Tell me your plan</h3><p>Budget, area and timing. Five minutes on WhatsApp.</p></div>
+      <div class="step"><i>02</i><h3>See the right homes</h3><p>A short list, not a long one, with a viewing plan.</p></div>
+      <div class="step"><i>03</i><h3>Close with confidence</h3><p>I stay with you until the keys are in your hand.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sheet sheet--cream" id="reviews">
+  <div class="wrap">
+    <div class="eb">Kind words</div>
+    <h2>What clients <em>say.</em></h2>
+    <!-- SAMPLE reviews: replace with real client names and links to the real reviews -->
+    <div class="rv">
+      <blockquote>&ldquo;Placeholder review. Use a real client's words, with permission.&rdquo;<b>Client name</b><small>Replace before launch</small></blockquote>
+      <blockquote>&ldquo;Placeholder review. Keep it short and specific about the result.&rdquo;<b>Client name</b><small>Replace before launch</small></blockquote>
+      <blockquote>&ldquo;Placeholder review. Link to the Google review if possible.&rdquo;<b>Client name</b><small>Replace before launch</small></blockquote>
+    </div>
+  </div>
+</section>
+
+<section class="sheet sheet--navy" id="contact">
+  <div class="wrap">
+    <div class="eb">Contact</div>
+    <h2>Let's find your <em>next home.</em></h2>
+    <div class="book">
+      <div>
+        <p class="lede2">Choose what you are looking for and I reply on WhatsApp to confirm a time.</p>
+        <ul class="info">
+          <li><b>WhatsApp</b>+60 0-000 0000 (placeholder)</li>
+          <li><b>Licence</b>REN JW0611 (sample)</li>
+          <li><b>Area</b>Kuala Lumpur and Klang Valley</li>
+        </ul>
+      </div>
+      <form class="form" id="bookForm">
+        <label>I am looking for
+          <select id="svc" required>
+            <option value="">Choose one</option>
+            <option>New project</option><option>Used</option><option>Not sure yet</option>
+          </select>
+        </label>
+        <label>Your name<input id="nm" type="text" autocomplete="name" placeholder="Your name" required></label>
+        <label>Budget or area<input id="bd" type="text" placeholder="e.g. around RM600k, Mont Kiara"></label>
+        <button class="btn" type="submit">Send on WhatsApp</button>
+        <small>This opens WhatsApp with your message ready. I never share your details.</small>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>&copy; 2026 Sample Tang</span><span>Property agent &middot; Kuala Lumpur</span></div></footer>
+
+<script>
+(function(){
+  // New project / Used choices fill the form
+  document.querySelectorAll('[data-pick]').forEach(function(a){a.addEventListener('click',function(){var s=document.getElementById('svc');if(s)s.value=a.getAttribute('data-pick')})});
+  document.querySelectorAll('.seg a').forEach(function(a){a.addEventListener('click',function(e){
+    document.querySelectorAll('.seg a').forEach(function(x){x.removeAttribute('aria-current')});a.setAttribute('aria-current','true');
+    var s=document.getElementById('svc');if(s)s.value=a.textContent.trim();})});
+  // WhatsApp: placeholder number, replace with the agent's real one
+  var NUM='60000000000';
+  document.getElementById('bookForm').addEventListener('submit',function(e){e.preventDefault();
+    var t='Hi Sample, I am looking for: '+document.getElementById('svc').value+'. Name: '+document.getElementById('nm').value+'. '+(document.getElementById('bd').value?('Budget or area: '+document.getElementById('bd').value+'.'):'');
+    window.open('https://wa.me/'+NUM+'?text='+encodeURIComponent(t),'_blank','noopener');});
+})();
+</script>
+
 </body>
 </html>
