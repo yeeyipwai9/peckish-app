@@ -69,9 +69,9 @@ img{display:block;max-width:100%}
 .note small{display:block;font:600 11px var(--elegant);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-bottom:2px}
 .note strong{display:block;font:600 clamp(20px,2.1vw,30px)/1.1 var(--elegant);letter-spacing:-.01em}
 .note--lic,.note--exp,.note--hc{font-family:"Cormorant Garamond",Georgia,serif}
-.note--lic small{font:600 12px "Cormorant Garamond",Georgia,serif;letter-spacing:.26em}
-.note--lic strong{font:700 clamp(24px,2.2vw,32px)/1.1 "Cormorant Garamond",Georgia,serif;font-variant-numeric:lining-nums;letter-spacing:.01em}
-.note--exp strong,.note--hc strong{font:400 clamp(30px,3vw,44px)/1.02 "Allura","Cormorant Garamond",cursive;letter-spacing:0}
+.note--lic small{font:600 11px "Cormorant Garamond",Georgia,serif;letter-spacing:.26em}
+.note--lic strong{font:700 clamp(20px,1.8vw,26px)/1.1 "Cormorant Garamond",Georgia,serif;font-variant-numeric:lining-nums;letter-spacing:.01em}
+.note--exp strong,.note--hc strong{font:400 clamp(25px,2.4vw,35px)/1.02 "Allura","Cormorant Garamond",cursive;letter-spacing:0}
 .note--lic,.note--exp,.note--hc{left:3%;width:clamp(250px,27vw,320px);justify-content:space-between}
 .note--lic > div,.note--exp > div,.note--hc > div{flex:1}
 .note--lic{top:3%}
@@ -81,7 +81,7 @@ img{display:block;max-width:100%}
 .note--q,.note--c{right:3%;width:clamp(300px,33vw,400px)}
 .note--q,.note--c{gap:18px}
 .note--q{top:3%}
-.note--q p{font:italic 600 clamp(18px,1.7vw,24px)/1.28 "Cormorant Garamond",Georgia,serif;max-width:15em}
+.note--q p{font:italic 600 clamp(15px,1.3vw,19px)/1.28 "Cormorant Garamond",Georgia,serif;max-width:15em}
 .note--c{top:33%}
 .contact{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:var(--gold);color:var(--ink);font:700 16px var(--elegant);text-decoration:none;box-shadow:0 14px 30px -14px rgba(201,143,34,.9);transition:transform .25s,background .25s}
 .contact:hover{transform:translateY(-2px);background:var(--gold-d)}
@@ -170,7 +170,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
 
 /* desktop: notes sit ON the round orange glow, each one anchored to a point on its circle */
 @media(min-width:861px){
-  .stage{--S:min(120vw,980px);--R:calc(var(--S)*.37);--cy:calc(10svh + var(--ph) - var(--S)/2)}
+  .stage{--S:min(120vw,980px);--R:calc(var(--S)*.335);--cy:calc(10svh + var(--ph) - var(--S)/2)}
   .stage .note{display:block;width:0;height:0;gap:0;right:auto;left:calc(50% - var(--R)*var(--c));top:calc(var(--cy) + var(--R)*var(--s))}
   .stage .note--r{left:calc(50% + var(--R)*var(--c))}
   .stage .note > div,.stage .note > a{position:absolute;top:0;transform:translateY(-50%);white-space:nowrap}
@@ -181,8 +181,8 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   .note--lic{--c:.978;--s:-.208;--aw:76px}
   .note--exp{--c:.94;--s:.342;--aw:76px}
   .note--hc{--c:.643;--s:.766;--aw:76px}
-  .note--q{--c:.978;--s:-.208;--aw:76px}
-  .note--c{--c:.819;--s:.574;--aw:76px}
+  .note--q{--c:1;--s:0;--aw:76px}
+  .note--c{--c:.7;--s:.714;--aw:76px}
   .note--q p{white-space:normal;width:min(15em,calc(50vw - var(--R)*.98 - var(--aw) - 38px))}
 }
 /* ---------- phone ---------- */
