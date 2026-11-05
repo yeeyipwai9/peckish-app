@@ -70,13 +70,17 @@ img{display:block;max-width:100%}
 .note strong{display:block;font:600 clamp(20px,2.1vw,30px)/1.1 var(--elegant);letter-spacing:-.01em}
 .note--lic,.note--exp,.note--hc{font-family:"Comfortaa","Segoe UI",sans-serif}
 .note--lic small,.note--lic strong,.note--exp strong,.note--hc strong{font-family:"Comfortaa","Segoe UI",sans-serif}
-.note--lic{left:6%;top:2%}
-.note--exp{left:2%;top:34%}
+.note--lic,.note--exp,.note--hc{left:3%;width:clamp(250px,27vw,320px);justify-content:space-between}
+.note--lic > div,.note--exp > div,.note--hc > div{flex:1}
+.note--lic{top:3%}
+.note--exp{top:33%}
 .note--exp strong b,.note--hc strong b{color:var(--gold-d);font-weight:700}
-.note--hc{left:2%;top:63%}
-.note--q{right:0;top:2%;max-width:44%}
+.note--hc{top:63%}
+.note--q,.note--c{right:3%;width:clamp(300px,33vw,400px)}
+.note--q,.note--c{gap:18px}
+.note--q{top:3%}
 .note--q p{font:italic 500 clamp(15px,1.45vw,20px)/1.45 var(--elegant);max-width:15em}
-.note--c{right:5%;top:44%}
+.note--c{top:33%}
 .contact{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:var(--gold);color:var(--ink);font:700 16px var(--elegant);text-decoration:none;box-shadow:0 14px 30px -14px rgba(201,143,34,.9);transition:transform .25s,background .25s}
 .contact:hover{transform:translateY(-2px);background:var(--gold-d)}
 .contact svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
@@ -191,11 +195,11 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
   <p class="sub rise d2">I am a property agent in Kuala Lumpur.</p>
   <div class="stage rise d3">
     <!-- SAMPLE values: replace with the agent's real REN licence number, real years of experience and real client count -->
-    <div class="note note--lic"><div><small>Licensed agent</small><strong>REN JW0611</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M138 42C118 6 78 4 74 26c-3 18 26 18 24 0C96 10 58 8 14 36"/><path d="M14 36l14-.6M14 36l6.5-12.4"/></svg></div>
-    <div class="note note--exp"><div><strong><b>5+</b> years of<br>experience</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M138 42C118 6 78 4 74 26c-3 18 26 18 24 0C96 10 58 8 14 36"/><path d="M14 36l14-.6M14 36l6.5-12.4"/></svg></div>
-    <div class="note note--hc"><div><strong><b>700+</b> happy<br>clients</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M138 42C118 6 78 4 74 26c-3 18 26 18 24 0C96 10 58 8 14 36"/><path d="M14 36l14-.6M14 36l6.5-12.4"/></svg></div>
-    <div class="note note--q note--r"><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M138 42C118 6 78 4 74 26c-3 18 26 18 24 0C96 10 58 8 14 36"/><path d="M14 36l14-.6M14 36l6.5-12.4"/></svg><div><p>&ldquo;Very professional and patient. She did a lot of homework before I came.&rdquo;</p><span class="who">Happy client</span></div></div>
-    <div class="note note--c note--r"><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M138 42C118 6 78 4 74 26c-3 18 26 18 24 0C96 10 58 8 14 36"/><path d="M14 36l14-.6M14 36l6.5-12.4"/></svg><a class="contact" href="#book">Contact now <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
+    <div class="note note--lic"><div><small>Licensed agent</small><strong>REN JW0611</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M136 12C112 52 54 56 16 30"/><path d="M16 30l7 14.4M16 30l16 1.1"/></svg></div>
+    <div class="note note--exp"><div><strong><b>5+</b> years of<br>experience</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M136 12C112 52 54 56 16 30"/><path d="M16 30l7 14.4M16 30l16 1.1"/></svg></div>
+    <div class="note note--hc"><div><strong><b>700+</b> happy<br>clients</strong></div><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M136 12C112 52 54 56 16 30"/><path d="M16 30l7 14.4M16 30l16 1.1"/></svg></div>
+    <div class="note note--q note--r"><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M136 12C112 52 54 56 16 30"/><path d="M16 30l7 14.4M16 30l16 1.1"/></svg><div><p>&ldquo;Very professional and patient. She did a lot of homework before I came.&rdquo;</p><span class="who">Happy client</span></div></div>
+    <div class="note note--c note--r"><svg class="loop" viewBox="0 0 140 60" aria-hidden="true"><path d="M136 12C112 52 54 56 16 30"/><path d="M16 30l7 14.4M16 30l16 1.1"/></svg><a class="contact" href="#book">Contact now <svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></a></div>
     <img src="assets/sample-tang.webp" alt="Sample Tang, property agent, smiling with arms crossed" width="860" height="1253" fetchpriority="high">
     <div class="seg" id="sw" data-pos="0" role="group" aria-label="Property type">
       <button type="button" aria-pressed="true" data-i="0">New project</button>
